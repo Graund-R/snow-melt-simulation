@@ -85,7 +85,7 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
   <div id="netJoinWrap" style="margin-top:8px"><div style="font-size:12px;color:var(--mute);margin-bottom:4px">Или подключиться по коду</div><div style="display:flex;gap:8px"><input id="netCode" class="tx" placeholder="Вставь код матча" style="margin:0;min-width:0"><button id="netJoin" class="b" style="height:44px;flex:0 0 100px">Войти</button></div></div>
   <div id="netTurn" style="margin-top:8px;color:var(--mute);font-size:12px">В одиночном режиме все действия доступны локально.</div>
 </section>
-<div id="stage"><canvas id="cv" aria-label="Барабан револьвера: вращайте пальцем, нажимайте на каморы"></canvas><div id="flash" style="position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none"></div><div id="nofx">Не удалось запустить 3D. Откройте страницу в браузере с поддержкой WebGL.</div><button id="exitImmersive" aria-label="Выйти из режима без интерфейса" title="Выйти">×</button><div id="immersiveHint">Касание оси — выстрел · свайп — вращение</div></div>
+<div id="stage"><canvas id="cv" aria-label="Барабан револьвера: вращайте пальцем, нажимайте на каморы"></canvas><div id="flash" style="position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none"></div><div id="nofx">Не удалось запустить 3D. Откройте страницу в браузере с поддержкой WebGL.</div><button id="exitImmersive" aria-label="Выйти из режима без интерфейса" title="Выйти">×</button><div id="immersiveHint">Центр — выстрел · двойной тап снаружи — разворот · свайп — крутить</div></div>
 <div id="hint">Вращайте пальцем. Касание каморы: красный патрон или пусто. Двойное касание: синий патрон.</div>
 <div id="panel">
 <div id="row"><div><div id="res">Камора 1</div><div id="lab" style="font-size:14px;color:var(--brass);min-height:18px"></div><div id="chance"></div></div><div id="badge"></div></div>
@@ -136,6 +136,12 @@ var RING=maxOuter-CH;
 var CART_R=CH*0.82;
 if(!cfg.labels)cfg.labels=[];while(cfg.labels.length<N)cfg.labels.push('');cfg.labels=cfg.labels.slice(0,N);
 function spdM(){return Math.pow(1.25,(cfg.spd||5)-5);}
+/* Endpoint uncertainty grows exponentially with the speed setting. Values are in chamber steps. */
+function spinErrorChambers(){
+  var x=(Math.max(1,Math.min(10,+cfg.spd||5))-1)/9,k=2.0;
+  var e=0.02+(2.4-0.02)*(Math.exp(k*x)-1)/(Math.exp(k)-1);
+  return (Math.random()*2-1)*e;
+}
 function saveCfg(){try{localStorage.setItem('drumCfg',JSON.stringify(cfg));}catch(e){}}
 var loaded=[];for(var q=0;q<N;q++)loaded.push(q===0||q===Math.floor(N/2)?1:0);
 try{var sv=JSON.parse(localStorage.getItem('drum'));if(sv&&sv.length===N){for(var q2=0;q2<N;q2++)loaded[q2]=+sv[q2]||0;}}catch(e){}
@@ -215,7 +221,9 @@ function setCamMode(on){
   canvas.style.cursor=camMode?'move':'grab';
   var hint=$('immersiveHint');
   if(document.body.classList.contains('immersive')&&hint){
-    hint.textContent=camMode?'Перетаскивание — ракурс · двойной тап — сброс':'Касание оси — выстрел · свайп — вращение';
+    if(camMode)hint.textContent='Перетаскивание — ракурс · двойной тап — сброс';
+    else if(cfg.game)hint.textContent='Центр — выстрел · двойной тап снаружи — разворот · свайп — крутить';
+    else hint.textContent='Касание оси — выстрел · свайп — вращение';
   }
 }
 try{
@@ -410,6 +418,7 @@ function applyChamberGeom(){
 
 function rebuildN(newN){
   N=+newN||6;
+  resetGameKnowledge();
   cfg.n=N;
   applyChamberGeom();
   if(!cfg.labels)cfg.labels=[];
@@ -545,9 +554,9 @@ function spin(){
     if(netRole==='guest'){if(netTurn===1)sendNet({type:'request',action:'spin'});return;}
     if(netRole==='host'&&netTurn!==0&&!netActingForPeer)return;
   }
-  rdStart();whoosh();var dir=Math.random()<0.5?-1:1,turns=(3+Math.random()*3)*spdM();snapTo(Math.round((theta+dir*turns*Math.PI*2)/STEP)*STEP,(3.2+Math.random()*1.6)*(0.6+0.4*spdM()),eQ);
+  rdStart();whoosh();var dir=Math.random()<0.5?-1:1,turns=(3+Math.random()*3)*spdM();snapTo(Math.round((theta+dir*turns*Math.PI*2)/STEP+spinErrorChambers())*STEP,(3.2+Math.random()*1.6)*(0.6+0.4*spdM()),eQ);
 }
-function flick(w){rdStart();var aw=Math.abs(w),sg=w<0?-1:1;/* faster swipe -> longer and faster spin; slow swipe -> short gentle turn */var dur0=Math.min(9,Math.max(0.5,0.35+aw*0.16))*(0.7+0.3*spdM());var t=Math.round((theta+sg*aw*dur0/3)/STEP)*STEP,d=t-theta;if(Math.abs(d)<1e-6){snapNear();return;}snapTo(t,Math.min(10,Math.max(0.5,3*Math.abs(d)/aw)),eC);}
+function flick(w){rdStart();var aw=Math.abs(w),sg=w<0?-1:1;/* faster swipe -> longer and faster spin; speed setting adds endpoint uncertainty */var dur0=Math.min(9,Math.max(0.5,0.35+aw*0.16))*(0.7+0.3*spdM());var t=Math.round((theta+sg*aw*dur0/3)/STEP+spinErrorChambers())*STEP,d=t-theta;if(Math.abs(d)<1e-6){snapNear();return;}snapTo(t,Math.min(10,Math.max(0.5,3*Math.abs(d)/aw)),eC);}
 function projCh(i){var a=Math.PI/2+i*STEP+theta,r=canvas.getBoundingClientRect();
 var p=new THREE.Vector3(RING*Math.cos(a),RING*Math.sin(a),0.82).project(camera),q=new THREE.Vector3(RING*Math.cos(a)+CH,RING*Math.sin(a),0.82).project(camera);
 var px=(p.x*0.5+0.5)*r.width;return{x:px,y:(-p.y*0.5+0.5)*r.height,rad:Math.abs((q.x*0.5+0.5)*r.width-px)};}
@@ -563,6 +572,7 @@ function toggle(i){
   if(typeof netEnabled!=='undefined'&&netEnabled&&!netApplying)return;
   var tn=performance.now(),dbl=lastTap.i===i&&tn-lastTap.t<350;lastTap={i:i,t:dbl?0:tn};
   var was=loaded[i];
+  resetGameKnowledge();
   loaded[i]=dbl?2:(loaded[i]?0:1);
   paintCart(i);clink(!!loaded[i]);
   if(loaded[i]){
@@ -614,15 +624,37 @@ if(camDrag){
   return;
 }
 if(netPtr){var np=netPtr;netPtr=null;if(!cancel){var ndx=e.clientX-np.sx,ndy=e.clientY-np.sy,nd=Math.hypot(ndx,ndy);
-  if(nd<8&&performance.now()-np.t0<400){if(document.body.classList.contains('immersive')){var nr=canvas.getBoundingClientRect(),nc=cpx(nr);if(Math.hypot(e.clientX-nr.left-nc.x,e.clientY-nr.top-nc.y)<Math.min(nr.width,nr.height)*0.13&&!tween&&!spinning())fire();}}
+  if(nd<8&&performance.now()-np.t0<400){if(document.body.classList.contains('immersive')){var nr=canvas.getBoundingClientRect(),nc=cpx(nr);if(Math.hypot(e.clientX-nr.left-nc.x,e.clientY-nr.top-nc.y)<Math.min(nr.width,nr.height)*0.16&&!tween&&!spinning()){if(cfg.game)fireWithAim(cfg.aim==='self'?'self':'fwd');else fire();}}}
   else if(nd>=40&&!tween)spin();}
   return;}
 if(!drag)return;var n=performance.now(),d=drag;drag=null;canvas.style.cursor=camMode?'move':'grab';
 if(!cancel&&d.moved<8&&n-d.t0<400){
 var r=canvas.getBoundingClientRect(),px=e.clientX-r.left,py=e.clientY-r.top;
 if(document.body.classList.contains('immersive')){
-var center=cpx(r),cd=Math.hypot(px-center.x,py-center.y),centerLimit=Math.min(r.width,r.height)*0.13;
-if(cd<centerLimit){if(!tween&&!spinning())fire();return;}
+var center=cpx(r),cd=Math.hypot(px-center.x,py-center.y),centerLimit=Math.min(r.width,r.height)*0.16;
+/* tap on drum axis/center → fire with current aim (self or fwd), independent of camera */
+if(cd<centerLimit){
+  if(!tween&&!spinning()){
+    if(cfg.game)fireWithAim(cfg.aim==='self'?'self':'fwd');
+    else fire();
+  }
+  return;
+}
+/* double-tap outside drum → flip aim (self ↔ fwd) without shooting */
+if(cfg.game){
+  var nowTap=performance.now();
+  if(nowTap-(end._lastOutTap||0)<350){
+    end._lastOutTap=0;
+    var next=cfg.aim==='self'?'fwd':'self';
+    cfg.aim=next;saveCfg();setAimCam(next==='self');
+    showVer(next==='self'?'Ориентация: в себя':'Ориентация: вперёд',next==='self'?1:0);
+    refresh(true);
+    return;
+  }
+  end._lastOutTap=nowTap;
+}
+/* single tap outside: do nothing special (no chamber toggle in immersive game) */
+if(cfg.game){snapNear();return;}
 }
 var best=-1,bd=1e9;
 for(var i=0;i<N;i++){var p=projCh(i),dist=Math.hypot(px-p.x,py-p.y);if(dist<p.rad*1.25&&dist<bd){bd=dist;best=i;}}
@@ -810,7 +842,8 @@ function fire(netResult){
   if(!netResult&&typeof netEnabled!=='undefined'&&netEnabled&&!netApplying&&netRole==='host'&&netConn&&netConn.open){
     sendNet({type:'action',action:'fire',i:i,st:st,mis:mis});
   }
-  rdStart();var gres=netResult?null:gameScore(st,mis);
+  rdStart();var gres=netResult?null:gameScore(st,mis,i);
+  if(cfg.game&&cfg.blind)gameKnowledge[i]=(st&&!mis)?0:(st?st:0);
   addHist('shot',i,st,mis);pulse=1;snapTo(theta-STEP,0.38,eC);if(gres)gameApply(gres);
   if(!st||mis){
     dry();if(mis&&!gres)showVer('Осечка: патрон остался в каморе',null);refresh(true);
@@ -923,12 +956,13 @@ setTimeout(function(){if(ser)spin();},1300);}
 document.getElementById('spin').addEventListener('click',startSeries);
 function clearAll(){
   if(roundLocked()){showVer('Раунд идёт — заряд зафиксирован',1);return;}
-  clink(false);
+  resetGameKnowledge();clink(false);
   for(var i=0;i<N;i++)if(loaded[i]){loaded[i]=0;ct[i]=1.35;cSpin[i]=(Math.random()<0.5?-1:1)*(2+Math.random()*3);}
   save();refresh(true);
 }
 function fillAll(){
   if(roundLocked()){showVer('Раунд идёт — заряд зафиксирован',1);return;}
+  resetGameKnowledge();
   /* only empty chambers → red, with insert animation */
   var any=false;
   for(var i=0;i<N;i++)if(!loaded[i]){
@@ -941,6 +975,7 @@ function fillAll(){
 }
 function recolorAll(state){
   if(roundLocked()){showVer('Раунд идёт — заряд зафиксирован',1);return;}
+  resetGameKnowledge();
   /* only already loaded chambers — change colour, no insert anim */
   var any=false;
   for(var i=0;i<N;i++)if(loaded[i]&&loaded[i]!==state){
@@ -955,6 +990,7 @@ document.getElementById('toRed').addEventListener('click',function(){recolorAll(
 document.getElementById('toBlue').addEventListener('click',function(){recolorAll(2);});
 document.getElementById('random').addEventListener('click',function(){
   if(roundLocked()){showVer('Раунд идёт — заряд зафиксирован',1);return;}
+  resetGameKnowledge();
   if(cfg.blind&&gs.rd.started)endRound();
   clink(true);
   /* read live checkbox state first, then fall back to cfg */
@@ -997,7 +1033,8 @@ function frame(now){
     if(loaded[i]&&cPhase[i]<1){
       cPhase[i]+=0.035;
       var bounce=Math.sin(cPhase[i]*Math.PI)*0.08*(1-cPhase[i]);
-      carts[i].position.z=cz[i]-bounce;    }else{
+      carts[i].position.z=cz[i]-bounce;
+    }else{
       carts[i].position.z=cz[i];
     }
     /* spin while moving */
@@ -1344,27 +1381,39 @@ updateNetUi();
 
 /* ===== Game mode: blind drum, aim choice, scoring, floating points, records ===== */
 var HINT0=$('hint').textContent;
+/* Chamber states learned during a blind round: null = unknown, 0 = empty, 1/2 = loaded. */
+var gameKnowledge=[];
+function resetGameKnowledge(){gameKnowledge=[];for(var i=0;i<N;i++)gameKnowledge.push(null);}
+resetGameKnowledge();
 function saveGs(){try{localStorage.setItem('drumGame',JSON.stringify(gs));}catch(e){}}
 function netOn(){return typeof netEnabled!=='undefined'&&netEnabled;}
-function gameOdds(){
-  var live=loaded.filter(Boolean).length;
-  var ps=(live/N)*(1-Math.min(50,cfg.mis||0)/100);
-  /* fair EV≈0; soft floor; small risk premium for low probability */
-  function side(q){
-    var win=Math.round(100*(1-q));
-    var lose=Math.max(10,Math.round(100*q));
-    if(q>0.02&&q<0.35)win=Math.round(win*1.12);
-    return{q:q,win:Math.max(5,win),lose:lose};
+function gameOdds(target){
+  var pLoaded;
+  if(!cfg.blind){pLoaded=loaded[target] ? 1 : 0;}
+  else if(target>=0&&gameKnowledge[target]!==null){pLoaded=gameKnowledge[target]?1:0;}
+  else{
+    var live=loaded.filter(Boolean).length,knownLive=0,unknown=0;
+    for(var i=0;i<N;i++){
+      if(gameKnowledge[i]===null)unknown++;
+      else if(gameKnowledge[i])knownLive++;
+    }
+    pLoaded=unknown?Math.max(0,Math.min(1,(live-knownLive)/unknown)):(live>knownLive?1:0);
   }
-  return{fwd:side(ps),self:side(1-ps)};
+  var pShot=pLoaded*(1-Math.min(50,cfg.mis||0)/100);
+  function side(p){
+    /* Fixed loss, inverse-probability reward: a predictable success pays little. */
+    var win=p>=0.995?0:Math.min(300,Math.max(5,Math.round(100*(1-p)/Math.max(0.01,p))));
+    return{q:p,win:win,lose:100};
+  }
+  return{pLoaded:pLoaded,pShot:pShot,fwd:side(pShot),self:side(1-pShot)};
 }
 function sgn(p){return p>0?'+'+p:(p<0?'\u2212'+(-p):'0');}
-function gameScore(st,mis){
+function gameScore(st,mis,i){
   if(!cfg.game||netOn())return null;
-  var aim=cfg.aim==='self'?'self':'fwd',o=gameOdds()[aim],real=!!st&&!mis;
+  var aim=cfg.aim==='self'?'self':'fwd',o=gameOdds(i)[aim],real=!!st&&!mis;
   var ok=aim==='fwd'?real:!real,pts=ok?o.win:-o.lose,msg;
-  /* blue cartridge: higher stakes */
-  if(st===2)pts=Math.round(pts*1.35);
+  /* Blue raises the stakes only on the intended outcomes: forward hit reward, self-hit penalty. */
+  if(st===2&&!mis&&((aim==='fwd'&&ok)||(aim==='self'&&!ok)))pts=Math.round(pts*1.35);
   if(aim==='fwd')msg=ok?'Выстрел вперёд: попал':(mis?'Осечка: мимо':'Пусто: мимо');
   else msg=ok?(mis?'Осечка: повезло':'Пусто: выжил'):'Попал в себя';
   if(st===2)msg+=' · синий';
@@ -1379,19 +1428,28 @@ function gameApply(g){
   if(g.ok&&g.pts>0&&gs.streak>=3)setTimeout(function(){floatPts('Серия ×'+gs.streak,true,true);},260);
 }
 /* ===== Bets on next round ===== */
-function placeBet(pct){
+function placeBet(pctOrAmt,isAbs){
   if(!cfg.game||netOn()||gs.rd.started)return;
-  var maxBet=Math.max(0,gs.score);
-  var amt=Math.round(maxBet*(pct/100));
-  if(amt<=0&&pct>0){showVer('Недостаточно очков для ставки',1);return;}
-  /* refund previous bet if changing */
-  if(gs.rd.bet)gs.score+=gs.rd.bet;
-  gs.rd.bet=amt;
-  gs.score-=amt;
+  /* refund previous bet first so pool is correct */
+  if(gs.rd.bet){gs.score+=gs.rd.bet;gs.rd.bet=0;}
+  var pool=Math.max(0,gs.score);
+  var amt=0;
+  if(isAbs){
+    amt=Math.max(0,Math.min(pool,Math.round(+pctOrAmt||0)));
+  }else{
+    var pct=+pctOrAmt||0;
+    amt=Math.round(pool*(pct/100));
+  }
+  if(amt<=0){
+    gs.rd.bet=0;saveGs();
+    showVer('Ставка снята',null);floatPts('Без ставки',false,true);refresh(true);return;
+  }
+  if(amt>pool){showVer('Недостаточно очков для ставки',1);saveGs();refresh(true);return;}
+  gs.rd.bet=amt;gs.score-=amt;
   if(gs.score<0)gs.score=0;
   saveGs();
-  showVer(amt?('Ставка на раунд: '+amt+' ('+pct+'%)'):'Ставка снята',amt?0:null);
-  floatPts(amt?('Ставка '+amt):'Без ставки',!!amt,true);
+  showVer('Ставка на раунд: '+amt,0);
+  floatPts('Ставка '+amt,true,true);
   refresh(true);
 }
 function settleBet(rdPts){
@@ -1420,6 +1478,7 @@ function floatPts(text,pos,small){
 function newRd(n){return{n:n,started:false,red:0,blue:0,tot:N,pts:0,shots:0,hits:0,bet:0};}
 function rdStart(){
   var r=gs.rd;if(r.started||netOn())return;
+  resetGameKnowledge();
   r.started=true;r.red=loaded.filter(function(v){return v===1;}).length;r.blue=loaded.filter(function(v){return v===2;}).length;r.tot=N;
   saveGs();if(cfg.game)floatPts('Раунд '+r.n+(r.bet?' · ставка '+r.bet:''),true,true);
 }
@@ -1489,20 +1548,31 @@ function updGame(){
     l2="<div class='rc'>"+visualChargeDots(c)+"<span class='chlab'>"+chargeLabel(c)+"</span></div>";
   }
   if(cfg.game&&!rd.started&&!netOn()){
-    l2+="<div class='betrow'><span class='chlab'>Ставка:</span>"+
+    var pool=Math.max(0,gs.score+(rd.bet|0));
+    l2+="<div class='betrow'><span class='chlab'>Ставка (из "+pool+"):</span>"+
       "<button type='button' class='betb' data-p='0'>0</button>"+
       "<button type='button' class='betb' data-p='10'>10%</button>"+
       "<button type='button' class='betb' data-p='25'>25%</button>"+
-      "<button type='button' class='betb' data-p='50'>50%</button></div>";
+      "<button type='button' class='betb' data-p='50'>50%</button>"+
+      "<button type='button' class='betb' data-p='75'>75%</button>"+
+      "<button type='button' class='betb' data-p='100'>всё</button>"+
+      "<input type='number' class='betin' id='betCustom' min='0' max='"+pool+"' step='1' placeholder='своя' value='"+(rd.bet||'')+"'></div>";
   }
   rb.innerHTML=l1+l2;rb.style.display=(cfg.game||cfg.blind)?'block':'none';
   var bets=rb.querySelectorAll('.betb');
+  var pool2=Math.max(0,gs.score+(rd.bet|0));
   for(var bi=0;bi<bets.length;bi++){(function(btn){
     var p=+btn.getAttribute('data-p')||0;
-    if((rd.bet|0)===Math.round(Math.max(0,gs.score+(rd.bet|0))*(p/100))&&p>0)btn.classList.add('on');
-    if(p===0&&!(rd.bet|0))btn.classList.add('on');
-    btn.onclick=function(e){e.stopPropagation();placeBet(p);};
+    var expect=p===0?0:Math.round(pool2*(p/100));
+    if((rd.bet|0)===expect&&(p===0||expect>0))btn.classList.add('on');
+    btn.onclick=function(e){e.stopPropagation();placeBet(p,false);};
   })(bets[bi]);}
+  var betIn=rb.querySelector('#betCustom');
+  if(betIn){
+    betIn.onclick=function(e){e.stopPropagation();};
+    betIn.onchange=function(e){e.stopPropagation();placeBet(this.value,true);};
+    betIn.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();e.stopPropagation();placeBet(this.value,true);}};
+  }
   /* visual-only charge strip for immersive / no-UI */
   var vis=$('chargeVis');
   if(!vis){
@@ -1513,7 +1583,7 @@ function updGame(){
     vis.innerHTML=visualChargeDots(c);
     vis.style.display='flex';
   }else{vis.style.display='none';}
-  var o=gameOdds(),f=$('fire'),sf=$('fireSelf');
+  var o=gameOdds(topIdx()),f=$('fire'),sf=$('fireSelf');
   if(cfg.game){
     f.innerHTML='Вперёд'+(cfg.blind?'':'<small>+'+o.fwd.win+' / \u2212'+o.fwd.lose+'</small>');
     sf.innerHTML='В себя'+(cfg.blind?'':'<small>+'+o.self.win+' / \u2212'+o.self.lose+'</small>');
@@ -1523,7 +1593,7 @@ function updGame(){
 }
 function setBlind(on){
   if(on&&gs.rd.started)endRound();
-  cfg.blind=!!on;saveCfg();ser=null;verEl.style.display='none';
+  cfg.blind=!!on;resetGameKnowledge();saveCfg();ser=null;verEl.style.display='none';
   if(!on)for(var i=0;i<N;i++){carts[i].visible=!!loaded[i];}
   refresh(true);
 }
@@ -1643,6 +1713,7 @@ body.blind #dots,body.blind #chance,body.blind #count,body.blind #clear,body.bli
 #roundBar .betrow{display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap}
 #roundBar .betb{height:28px;padding:0 10px;border-radius:14px;border:1px solid var(--line);background:transparent;color:var(--ink);font:500 12px system-ui,sans-serif;cursor:pointer}
 #roundBar .betb.on{background:var(--fab);color:var(--fabink);border-color:var(--fab)}
+#roundBar .betin{width:72px;height:28px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:0 8px;font:500 12px system-ui,sans-serif;-webkit-user-select:text;user-select:text}
 .chvis{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap}
 .chd{width:11px;height:11px;border-radius:50%;border:1px solid transparent;box-sizing:border-box}
 .chd.red{background:var(--red);border-color:color-mix(in srgb,var(--red) 60%,#000);box-shadow:0 0 0 1px color-mix(in srgb,var(--red) 25%,transparent)}
