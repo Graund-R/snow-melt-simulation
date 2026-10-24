@@ -126,7 +126,8 @@ if(typeof cfg.randBlue!=='boolean')cfg.randBlue=false;
 var gs={score:0,shots:0,hits:0,streak:0,top:0,bestStreak:0,tShots:0,tHits:0,sessions:[],rounds:[],bestRound:0,rd:null};
 try{var g0=JSON.parse(localStorage.getItem('drumGame'));if(g0)for(var gk in g0)gs[gk]=g0[gk];}catch(e){}
 if(!Array.isArray(gs.sessions))gs.sessions=[];if(!Array.isArray(gs.rounds))gs.rounds=[];
-if(!gs.rd||typeof gs.rd!=='object')gs.rd={n:1,started:false,red:0,blue:0,tot:cfg.n,pts:0,shots:0,hits:0};
+if(!gs.rd||typeof gs.rd!=='object')gs.rd={n:1,started:false,red:0,blue:0,tot:cfg.n,pts:0,shots:0,hits:0,bet:0};
+if(typeof gs.rd.bet!=='number')gs.rd.bet=0;
 var N=cfg.n,STEP=Math.PI*2/N;
 /* Chambers always fit inside unit drum; cartridge scales with hole size */
 var maxOuter=0.92;
@@ -149,8 +150,10 @@ renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.
 var scene=new THREE.Scene();
 var camera=new THREE.PerspectiveCamera(32,1,0.1,50);
 var camDefault={theta:1.26041,phi:1.38434,dist:1};
+/* self: 180° flip so muzzle points at the player */
+var camSelf={theta:camDefault.theta+Math.PI,phi:camDefault.phi,dist:camDefault.dist};
 var camView={theta:camDefault.theta,phi:camDefault.phi,dist:camDefault.dist};
-var camMode=false,camDrag=null;
+var camMode=false,camDrag=null,camAimTween=null;
 function camPos(){
   var th=camView.theta,ph=camView.phi,d=camView.dist;
   var w=stage.clientWidth||360,h=stage.clientHeight||360;
@@ -165,6 +168,28 @@ function camPos(){
   );
   camera.lookAt(0,0,0);
   camera.updateProjectionMatrix();
+}
+function setAimCam(toSelf){
+  if(camMode)return;
+  var tgt=toSelf
+    ?{theta:camDefault.theta+Math.PI,phi:camDefault.phi,dist:camDefault.dist}
+    :{theta:camDefault.theta,phi:camDefault.phi,dist:camDefault.dist};
+  camAimTween={
+    t0:performance.now(),dur:0.55,
+    from:{theta:camView.theta,phi:camView.phi,dist:camView.dist},
+    to:tgt
+  };
+}
+function stepAimCam(now){
+  if(!camAimTween)return;
+  var p=Math.min(1,(now-camAimTween.t0)/(camAimTween.dur*1000));
+  var e=1-Math.pow(1-p,3);
+  var f=camAimTween.from,t=camAimTween.to;
+  camView.theta=f.theta+(t.theta-f.theta)*e;
+  camView.phi=f.phi+(t.phi-f.phi)*e;
+  camView.dist=f.dist+(t.dist-f.dist)*e;
+  camPos();
+  if(p>=1)camAimTween=null;
 }
 function resize(){
   var w=stage.clientWidth||360,h=stage.clientHeight||360;
@@ -605,6 +630,42 @@ if(best>=0)toggle(best);snapNear();return;}
 var s=d.s,w=0;
 if(s.length>1&&n-s[s.length-1].t<80){var dt=(s[s.length-1].t-s[0].t)/1000;if(dt>0.008)w=(s[s.length-1].th-s[0].th)/dt;}
 w=Math.max(-90,Math.min(90,w));
+/* strong short counter-clockwise flick → reshuffle drum (+ end round in game mode) */
+var gestDur=n-d.t0;
+if(!netOn()&&w>18&&gestDur<520&&gestDur>30){
+  var done=null;
+  if(cfg.game)done=endRound();
+  /* always reshuffle chambers */
+  var cbEl=$('randBlue');
+  var allowBlue=cbEl?!!cbEl.checked:!!cfg.randBlue;
+  cfg.randBlue=allowBlue;saveCfg();
+  if(cfg.blind&&cfg.game){
+    autoLoad();
+  }else{
+    for(var ri=0;ri<N;ri++){
+      var rr=Math.random(),st;
+      if(allowBlue)st=rr<0.30?0:(rr<0.70?1:2);
+      else st=rr<0.45?0:1;
+      var was=loaded[ri];
+      loaded[ri]=st;paintCart(ri);
+      if(st&&!was){ct[ri]=0;cz[ri]=1.3;cSpin[ri]=(Math.random()<0.5?-1:1)*(3+Math.random()*4);cPhase[ri]=0;carts[ri].visible=true;carts[ri].rotation.z=0;}
+      else if(!st&&was){ct[ri]=1.35;cSpin[ri]=(Math.random()<0.5?-1:1)*(2+Math.random()*3);}
+      else if(st){carts[ri].visible=true;}
+      else{carts[ri].visible=false;}
+    }
+    save();
+  }
+  if(cfg.game){
+    if(done)showVer('Раунд '+done.n+' завершён жестом · '+sgn(done.pts)+' → раунд '+gs.rd.n,done.pts>=0?0:1);
+    else showVer('Раунд '+gs.rd.n+' · барабан обновлён',null);
+    floatPts('Раунд '+gs.rd.n,true,true);
+  }else{
+    showVer('Барабан обновлён',null);
+  }
+  flick(w);
+  refresh(true);
+  return;
+}
 if(Math.abs(w)<1.2)snapNear();else flick(w);}
 canvas.addEventListener('pointerup',function(e){end(e,false);});
 canvas.addEventListener('pointercancel',function(e){end(e,true);});
@@ -797,7 +858,8 @@ $('spd').value=cfg.spd;$('spd').oninput=function(){cfg.spd=+this.value;saveCfg()
 $('fxsp').checked=cfg.fx!==false;$('fxsp').onchange=function(){cfg.fx=this.checked;saveCfg();};
 $('vib').checked=cfg.vib;$('vib').onchange=function(){cfg.vib=this.checked;saveCfg();applyVib();};
 if($('randBlue')){$('randBlue').checked=!!cfg.randBlue;$('randBlue').onchange=function(){cfg.randBlue=this.checked;saveCfg();};}
-$('camToggle').textContent=camMode?'Выйти из ракурса':'Режим ракурса';$('camToggle').onclick=function(){setCamMode(!camMode);renderCfg();};
+$('camToggle').textContent=camMode?'Выйти из ракурса':'Режим ракурса';
+$('camToggle').onclick=function(){setCamMode(!camMode);renderCfg();};
 $('camReset').onclick=function(){resetCam();};
 seg('segCam',[
   ['default','Обычный'],
@@ -837,7 +899,16 @@ $('bHist').onclick=function(){renderHist();openSheet('shHist');};
 $('bCfg').onclick=function(){renderCfg();openSheet('shCfg');};
 $('hClear').onclick=function(){hist=[];try{localStorage.removeItem('drumHist');}catch(e){}renderHist();};
 var xs=document.querySelectorAll('.xc');for(var j=0;j<xs.length;j++)xs[j].onclick=closeSheets;
-$('fire').onclick=function(){drag=null;if(cfg.game){cfg.aim='fwd';saveCfg();}fire();};
+function fireWithAim(aim){
+  drag=null;
+  var prev=cfg.aim;
+  cfg.aim=aim;saveCfg();
+  var needTurn=(aim==='self'&&prev!=='self')||(aim==='fwd'&&prev==='self');
+  if(needTurn)setAimCam(aim==='self');
+  if(needTurn)setTimeout(function(){fire();},580);
+  else fire();
+}
+$('fire').onclick=function(){fireWithAim(cfg.game?'fwd':(cfg.aim||'fwd'));};
 $('sub').textContent=N+' камор, один исход';
 applyTheme();applyVib();
 var ser=null,verEl=$('ver'),BG=['var(--okbg)','var(--redbg)','var(--bluebg)'];
@@ -892,8 +963,8 @@ document.getElementById('random').addEventListener('click',function(){
   cfg.randBlue=allowBlue;saveCfg();
   for(var i=0;i<N;i++){
     var r=Math.random(),st;
-    /* blue on: ~35% empty, ~40% red, ~25% blue */
-    if(allowBlue)st=r<0.35?0:(r<0.75?1:2);
+    /* blue on: ~30% empty, ~40% red, ~30% blue */
+    if(allowBlue)st=r<0.30?0:(r<0.70?1:2);
     else st=r<0.45?0:1;
     var was=loaded[i];
     if(st===was)continue;
@@ -907,6 +978,7 @@ document.getElementById('random').addEventListener('click',function(){
 
 
 function frame(now){
+  stepAimCam(now);
   if(tween){var p=Math.min(1,(now-tween.t0)/(tween.dur*1000));theta=tween.from+(tween.to-tween.from)*tween.ease(p);
   if(p>=1){var big=tween.dur>0.4;theta=tween.to;tween=null;pulse=1;if(big){clunk();logSpin();}try{if(navigator.vibrate)navigator.vibrate(12);}catch(x){}}}
   var cur=Math.round(theta/STEP);
@@ -925,8 +997,7 @@ function frame(now){
     if(loaded[i]&&cPhase[i]<1){
       cPhase[i]+=0.035;
       var bounce=Math.sin(cPhase[i]*Math.PI)*0.08*(1-cPhase[i]);
-      carts[i].position.z=cz[i]-bounce;
-    }else{
+      carts[i].position.z=cz[i]-bounce;    }else{
       carts[i].position.z=cz[i];
     }
     /* spin while moving */
@@ -1276,8 +1347,15 @@ var HINT0=$('hint').textContent;
 function saveGs(){try{localStorage.setItem('drumGame',JSON.stringify(gs));}catch(e){}}
 function netOn(){return typeof netEnabled!=='undefined'&&netEnabled;}
 function gameOdds(){
-  var n=loaded.filter(Boolean).length,ps=(n/N)*(1-Math.min(50,cfg.mis||0)/100);
-  function side(q){return{q:q,win:Math.round(100*(1-q)),lose:Math.max(20,Math.round(100*q))};}
+  var live=loaded.filter(Boolean).length;
+  var ps=(live/N)*(1-Math.min(50,cfg.mis||0)/100);
+  /* fair EV≈0; soft floor; small risk premium for low probability */
+  function side(q){
+    var win=Math.round(100*(1-q));
+    var lose=Math.max(10,Math.round(100*q));
+    if(q>0.02&&q<0.35)win=Math.round(win*1.12);
+    return{q:q,win:Math.max(5,win),lose:lose};
+  }
   return{fwd:side(ps),self:side(1-ps)};
 }
 function sgn(p){return p>0?'+'+p:(p<0?'\u2212'+(-p):'0');}
@@ -1285,8 +1363,11 @@ function gameScore(st,mis){
   if(!cfg.game||netOn())return null;
   var aim=cfg.aim==='self'?'self':'fwd',o=gameOdds()[aim],real=!!st&&!mis;
   var ok=aim==='fwd'?real:!real,pts=ok?o.win:-o.lose,msg;
+  /* blue cartridge: higher stakes */
+  if(st===2)pts=Math.round(pts*1.35);
   if(aim==='fwd')msg=ok?'Выстрел вперёд: попал':(mis?'Осечка: мимо':'Пусто: мимо');
   else msg=ok?(mis?'Осечка: повезло':'Пусто: выжил'):'Попал в себя';
+  if(st===2)msg+=' · синий';
   return{ok:ok,pts:pts,aim:aim,msg:msg+' ('+sgn(pts)+')'};
 }
 function gameApply(g){
@@ -1296,6 +1377,34 @@ function gameApply(g){
   if(gs.score>gs.top)gs.top=gs.score;
   saveGs();showVer(g.msg,g.ok?0:1);floatPts(sgn(g.pts),g.pts>0);
   if(g.ok&&g.pts>0&&gs.streak>=3)setTimeout(function(){floatPts('Серия ×'+gs.streak,true,true);},260);
+}
+/* ===== Bets on next round ===== */
+function placeBet(pct){
+  if(!cfg.game||netOn()||gs.rd.started)return;
+  var maxBet=Math.max(0,gs.score);
+  var amt=Math.round(maxBet*(pct/100));
+  if(amt<=0&&pct>0){showVer('Недостаточно очков для ставки',1);return;}
+  /* refund previous bet if changing */
+  if(gs.rd.bet)gs.score+=gs.rd.bet;
+  gs.rd.bet=amt;
+  gs.score-=amt;
+  if(gs.score<0)gs.score=0;
+  saveGs();
+  showVer(amt?('Ставка на раунд: '+amt+' ('+pct+'%)'):'Ставка снята',amt?0:null);
+  floatPts(amt?('Ставка '+amt):'Без ставки',!!amt,true);
+  refresh(true);
+}
+function settleBet(rdPts){
+  var bet=gs.rd&&gs.rd.bet|0;
+  if(!bet)return null;
+  if(rdPts>0){
+    /* win: return bet + 50% profit */
+    var win=bet+Math.round(bet*0.5);
+    gs.score+=win;
+    return{ok:true,amt:win,profit:win-bet};
+  }
+  /* lose: bet already deducted */
+  return{ok:false,amt:bet,profit:-bet};
 }
 function floatPts(text,pos,small){
   var st=$('stage'),r=canvas.getBoundingClientRect(),c=cpx(r),el=document.createElement('div');
@@ -1308,18 +1417,33 @@ function floatPts(text,pos,small){
   st.appendChild(el);
   setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},pos?1800:1600);
 }
-function newRd(n){return{n:n,started:false,red:0,blue:0,tot:N,pts:0,shots:0,hits:0};}
+function newRd(n){return{n:n,started:false,red:0,blue:0,tot:N,pts:0,shots:0,hits:0,bet:0};}
 function rdStart(){
   var r=gs.rd;if(r.started||netOn())return;
   r.started=true;r.red=loaded.filter(function(v){return v===1;}).length;r.blue=loaded.filter(function(v){return v===2;}).length;r.tot=N;
-  saveGs();if(cfg.game)floatPts('Раунд '+r.n,true,true);
+  saveGs();if(cfg.game)floatPts('Раунд '+r.n+(r.bet?' · ставка '+r.bet:''),true,true);
 }
 function endRound(){
   var r=gs.rd,done=null;
   if(r.started){
-    if(cfg.game&&r.shots>0){done={n:r.n,pts:r.pts,sh:r.shots,h:r.hits,red:r.red,blue:r.blue,t:Date.now()};gs.rounds.unshift(done);gs.rounds=gs.rounds.slice(0,30);if(r.pts>(gs.bestRound||0))gs.bestRound=r.pts;}
+    var betRes=null;
+    if(cfg.game)betRes=settleBet(r.pts);
+    if(cfg.game&&r.shots>0){
+      done={n:r.n,pts:r.pts,sh:r.shots,h:r.hits,red:r.red,blue:r.blue,bet:r.bet|0,betRes:betRes,t:Date.now()};
+      gs.rounds.unshift(done);gs.rounds=gs.rounds.slice(0,30);
+      if(r.pts>(gs.bestRound||0))gs.bestRound=r.pts;
+    }
+    if(betRes){
+      if(betRes.ok){floatPts('Ставка +'+betRes.amt,true);showVer('Ставка сыграла: +'+betRes.amt,0);}
+      else{floatPts('Ставка −'+betRes.amt,false);showVer('Ставка сгорела: −'+betRes.amt,1);}
+      if(gs.score>gs.top)gs.top=gs.score;
+    }
     gs.rd=newRd(r.n+1);
-  }else{gs.rd=newRd(r.n);}
+  }else{
+    /* refund unused bet if round never started */
+    if(r.bet){gs.score+=r.bet;r.bet=0;}
+    gs.rd=newRd(r.n);
+  }
   saveGs();return done;
 }
 function autoLoad(){
@@ -1360,11 +1484,25 @@ function updGame(){
   document.body.classList.toggle('blind',!!cfg.blind);
   $('gmBtn').className='sg gt'+(cfg.game?' on':'');$('blindBtn').className='sg gt'+(cfg.blind?' on':'');
   var rd=gs.rd,rb=$('roundBar'),l1='',l2='',c=chargeCounts();
-  if(cfg.game)l1="<div class='rl'><span class='rt'>РАУНД "+rd.n+" · "+(rd.started?'ИДЁТ · '+rd.shots+' выстр. · '+sgn(rd.pts):'ПОДГОТОВКА')+"</span><span>Очки <b>"+gs.score+"</b> ›</span></div>";
+  if(cfg.game)l1="<div class='rl'><span class='rt'>РАУНД "+rd.n+" · "+(rd.started?'ИДЁТ · '+rd.shots+' выстр. · '+sgn(rd.pts):'ПОДГОТОВКА')+(rd.bet?' · ставка '+rd.bet:'')+"</span><span>Очки <b>"+gs.score+"</b> ›</span></div>";
   if(cfg.game||cfg.blind){
     l2="<div class='rc'>"+visualChargeDots(c)+"<span class='chlab'>"+chargeLabel(c)+"</span></div>";
   }
+  if(cfg.game&&!rd.started&&!netOn()){
+    l2+="<div class='betrow'><span class='chlab'>Ставка:</span>"+
+      "<button type='button' class='betb' data-p='0'>0</button>"+
+      "<button type='button' class='betb' data-p='10'>10%</button>"+
+      "<button type='button' class='betb' data-p='25'>25%</button>"+
+      "<button type='button' class='betb' data-p='50'>50%</button></div>";
+  }
   rb.innerHTML=l1+l2;rb.style.display=(cfg.game||cfg.blind)?'block':'none';
+  var bets=rb.querySelectorAll('.betb');
+  for(var bi=0;bi<bets.length;bi++){(function(btn){
+    var p=+btn.getAttribute('data-p')||0;
+    if((rd.bet|0)===Math.round(Math.max(0,gs.score+(rd.bet|0))*(p/100))&&p>0)btn.classList.add('on');
+    if(p===0&&!(rd.bet|0))btn.classList.add('on');
+    btn.onclick=function(e){e.stopPropagation();placeBet(p);};
+  })(bets[bi]);}
   /* visual-only charge strip for immersive / no-UI */
   var vis=$('chargeVis');
   if(!vis){
@@ -1410,7 +1548,7 @@ function newGame(){
 }
 $('roundBar').onclick=function(){renderRec();openSheet('shRec');};
 $('gNew').onclick=newGame;
-$('fireSelf').onclick=function(){drag=null;cfg.aim='self';saveCfg();fire();};
+$('fireSelf').onclick=function(){fireWithAim('self');};
 $('rdNew').onclick=function(){if(netOn())return;closeSheets();endRound();if(cfg.blind)autoLoad();else showVer('Новый раунд: '+gs.rd.n,null);refresh(true);};
 $('gWipe').onclick=function(){gs={score:0,shots:0,hits:0,streak:0,top:0,bestStreak:0,tShots:0,tHits:0,sessions:[],rounds:[],bestRound:0,rd:newRd(1)};saveGs();renderRec();refresh(true);};
 
@@ -1445,19 +1583,17 @@ function sparkFx(dt){
   if(cfg.fx===false||!dt){fxPrev=theta;return;}
   if(fxPrev===null)fxPrev=theta;
   var om=(theta-fxPrev)/dt,sp=Math.abs(om);fxPrev=theta;
-  /* heat builds only on fast spin; cools quickly */
-  if(sp>9&&!camMode)fxHeat=Math.min(1.6,fxHeat+dt*1.8);
-  else fxHeat=Math.max(0,fxHeat-dt*3.2);
-  if(fxHeat<0.22)return;
+  /* rare: only very strong sustained spin builds heat; cools fast */
+  if(sp>22&&!camMode)fxHeat=Math.min(1.4,fxHeat+dt*1.1);
+  else fxHeat=Math.max(0,fxHeat-dt*4.5);
+  if(fxHeat<0.55)return;
   var dir=om>0?1:-1;
-  var nr=Math.min(7,Math.round(fxHeat*sp*dt*3.5)+1);
-  var baseSpd=1.8+Math.min(sp,50)*0.08;
+  var nr=Math.min(4,Math.round((fxHeat-0.5)*sp*dt*1.6)+1);
+  var baseSpd=2.0+Math.min(sp,55)*0.07;
   for(var i=0;i<nr;i++){
-    /* origin: near central axis, slight offset */
     var a=Math.random()*6.283;
     var r0=0.04+Math.random()*0.12;
     var pos=new THREE.Vector3(r0*Math.cos(a),r0*Math.sin(a),(Math.random()-0.5)*0.35);
-    /* velocity: radial outward + tangential from spin + upward scatter */
     var rad=new THREE.Vector3(Math.cos(a),Math.sin(a),0);
     var tan=new THREE.Vector3(-Math.sin(a)*dir,Math.cos(a)*dir,0);
     var spd=baseSpd*(0.7+Math.random()*1.1);
@@ -1469,9 +1605,8 @@ function sparkFx(dt){
     var life=0.28+Math.random()*0.45;
     fxSpark(pos,vel,k,sz,life,4.5+Math.random()*3,1.4);
   }
-  /* occasional denser burst from center */
-  if(fxHeat>0.85&&Math.random()<0.12){
-    for(var j=0;j<10;j++){
+  if(fxHeat>1.05&&Math.random()<0.08){
+    for(var j=0;j<8;j++){
       var u=Math.random()*6.283,w=Math.acos(2*Math.random()-1);
       var sp2=2.2+Math.random()*2.8;
       var v2=new THREE.Vector3(Math.sin(w)*Math.cos(u),Math.sin(w)*Math.sin(u),Math.cos(w)*0.55).multiplyScalar(sp2);
@@ -1479,7 +1614,7 @@ function sparkFx(dt){
     }
   }
   fxSndT-=dt;
-  if(fxSndT<=0){fxSndT=0.045+Math.random()*0.04;grindSnd(fxHeat);}
+  if(fxSndT<=0){fxSndT=0.055+Math.random()*0.05;grindSnd(fxHeat*0.85);}
 }
 
 refresh(true);requestAnimationFrame(frame);
@@ -1505,6 +1640,9 @@ body.blind #dots,body.blind #chance,body.blind #count,body.blind #clear,body.bli
 #roundBar b{color:var(--ink);font:500 17px Oswald,"Arial Narrow",system-ui,sans-serif}
 #roundBar .rc{margin-top:4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 #roundBar .chlab{font-size:12px;color:var(--mute)}
+#roundBar .betrow{display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap}
+#roundBar .betb{height:28px;padding:0 10px;border-radius:14px;border:1px solid var(--line);background:transparent;color:var(--ink);font:500 12px system-ui,sans-serif;cursor:pointer}
+#roundBar .betb.on{background:var(--fab);color:var(--fabink);border-color:var(--fab)}
 .chvis{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap}
 .chd{width:11px;height:11px;border-radius:50%;border:1px solid transparent;box-sizing:border-box}
 .chd.red{background:var(--red);border-color:color-mix(in srgb,var(--red) 60%,#000);box-shadow:0 0 0 1px color-mix(in srgb,var(--red) 25%,transparent)}
