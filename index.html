@@ -1253,3 +1253,10 @@ if ("serviceWorker" in navigator) {
 </script>
 </body>
 </html>
+
+<style id="mobile-scroll-fix-v2">
+/* Let vertical finger gestures scroll the page even when they start over the 3D canvas. */
+canvas#cv { touch-action: pan-y pinch-zoom; }
+#stage { flex: none; height: min(34dvh, 300px); min-height: 190px; }
+@media (max-height: 700px) { #stage { height: 30dvh; min-height: 170px; } }
+</style>
