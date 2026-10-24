@@ -822,7 +822,7 @@ $('bHist').onclick=function(){renderHist();openSheet('shHist');};
 $('bCfg').onclick=function(){renderCfg();openSheet('shCfg');};
 $('hClear').onclick=function(){hist=[];try{localStorage.removeItem('drumHist');}catch(e){}renderHist();};
 var xs=document.querySelectorAll('.xc');for(var j=0;j<xs.length;j++)xs[j].onclick=closeSheets;
-$('fire').onclick=fire;
+$('fire').onclick=function(){drag=null;fire();};
 $('sub').textContent=N+' камор, один исход';
 applyTheme();applyVib();
 var ser=null,verEl=$('ver'),BG=['var(--okbg)','var(--redbg)','var(--bluebg)'];
