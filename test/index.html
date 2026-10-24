@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0e1013">
-
+<link rel="manifest" href="./manifest.webmanifest">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Барабан">
@@ -61,33 +61,12 @@ button#fire{background:var(--red);color:var(--bg);border-color:var(--red);font-s
 input.tx{width:100%;box-sizing:border-box;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:0 12px;font:16px system-ui,sans-serif;margin-bottom:8px;-webkit-user-select:text;user-select:text}
 .hr{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:.5px solid var(--line)}
 #nofx{display:none;position:absolute;inset:0;align-items:center;justify-content:center;text-align:center;padding:24px;color:var(--mute);font:14px system-ui,sans-serif}
-
-/* Mobile layout: scroll the whole page; online controls can be collapsed without disconnecting. */
-#onlinePanel.collapsed{display:none!important}
-#onlinePanel{display:block}
-html,body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
-body{overflow-y:auto;overscroll-behavior-y:contain}
-#app{height:auto;min-height:100dvh;max-width:560px;display:flex;flex-direction:column}
-#panel{flex-shrink:0}
-#onlinePanel{flex-shrink:0}
-header{flex:none;flex-wrap:wrap}
-header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
-#stage{height:min(44dvh,420px);min-height:260px;flex:none}
-#panel{flex:none;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
-#dots{flex-wrap:wrap}
-@media(max-height:700px){
-  header{padding-top:8px}
-  h1{font-size:23px}
-  #stage{height:36dvh;min-height:230px}
-  #panel{padding-top:12px}
-  .dot{width:38px;height:38px}
-}
 </style>
 </head>
 <body>
 <div id="app">
 <header><div><h1>Барабан</h1><p id='sub'></p></div><div style='display:flex;gap:8px'><button class='ib' id='camBtn' aria-label='Режим ракурса' title='Режим ракурса: перетаскивайте, чтобы вращать камеру'>Ракурс</button><button class='ib' id='immersiveBtn' aria-label='Режим без интерфейса' title='Режим без интерфейса'>Без UI</button><button class='ib' id='bHist' aria-label='История'><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><circle cx='12' cy='12' r='9'/><path d='M12 7v5l3 2'/></svg></button><button class='ib' id='bCfg' aria-label='Настройки'><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M4 7h9M17 7h3M4 17h3M11 17h9'/><circle cx='15' cy='7' r='2'/><circle cx='9' cy='17' r='2'/></svg></button><button id="snd" aria-label="Звук включён" aria-pressed="true" style="width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);padding:0;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/><line id="slash" x1="3" y1="3" x2="21" y2="21" visibility="hidden"/></svg></button></div></header>
-<section id="onlinePanel" class="collapsed" style="margin:0 16px 12px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--panel);font:14px system-ui,sans-serif">
+<section id="onlinePanel" style="margin:0 16px 12px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--panel);font:14px system-ui,sans-serif">
   <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px"><strong>Онлайн · 2 игрока</strong><span id="netStatus" style="color:var(--mute);font-size:12px">Не подключено</span></div>
   <div style="display:flex;gap:8px;flex-wrap:wrap"><button id="netCreate" class="b" style="height:42px;flex:1;min-width:120px">Создать матч</button><button id="netDisconnect" class="b" style="height:42px;flex:1;min-width:120px" disabled>Отключиться</button></div>
   <div id="netShareWrap" style="display:none;margin-top:8px"><div style="font-size:12px;color:var(--mute);margin-bottom:4px">Код матча (второй игрок вводит его или открывает ссылку)</div><div style="display:flex;gap:8px"><input id="netShare" class="tx" readonly style="margin:0;min-width:0"><button id="netCopy" class="b" style="height:44px;flex:0 0 88px">Ссылка</button></div></div>
@@ -809,7 +788,6 @@ var L=$('labs');L.innerHTML='';
 for(var i=0;i<N;i++)(function(i){var x=document.createElement('input');x.className='tx';x.maxLength=40;x.placeholder='Камора '+(i+1);x.value=cfg.labels[i]||'';x.setAttribute('aria-label','Смысл каморы '+(i+1));x.oninput=function(){cfg.labels[i]=x.value;saveCfg();refresh(true);};L.appendChild(x);})(i);}
 function setImmersive(on){document.body.classList.toggle('immersive',!!on);$('immersiveBtn').textContent=on?'Обычный вид':'Без UI';$('immersiveBtn').setAttribute('aria-pressed',on?'true':'false');if(on)closeSheets();setTimeout(function(){if(renderer&&camera){var w=$('stage').clientWidth,h=$('stage').clientHeight;if(w&&h){camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);}}},80);}
 $('immersiveBtn').onclick=function(){setImmersive(!document.body.classList.contains('immersive'));};
- $('onlineToggle').onclick=function(){var p=$('onlinePanel');p.classList.toggle('collapsed');$('onlineToggle').setAttribute('aria-expanded',p.classList.contains('collapsed')?'false':'true');if(!p.classList.contains('collapsed'))p.scrollIntoView({behavior:'smooth',block:'nearest'});};
 $('exitImmersive').onclick=function(){setImmersive(false);};
 $('camBtn').onclick=function(){setCamMode(!camMode);};
 canvas.addEventListener('wheel',function(e){
@@ -1252,7 +1230,9 @@ refresh(true);requestAnimationFrame(frame);
 })();
 </script>
 <script>
-
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(error => console.error("Service worker registration failed:", error)));
+}
 </script>
 </body>
 </html>
