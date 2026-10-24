@@ -89,17 +89,17 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
 <div id="hint">Вращайте пальцем. Касание каморы: красный патрон или пусто. Двойное касание: синий патрон.</div>
 <div id="panel">
 <div id="row"><div><div id="res">Камора 1</div><div id="lab" style="font-size:14px;color:var(--brass);min-height:18px"></div><div id="chance"></div></div><div id="badge"></div></div>
-<div id="gameBar" style="margin-top:12px"><div class="seg"><button class="sg" id="gmBtn">Режим игры</button><button class="sg" id="blindBtn">Скрыть заряд</button></div><div id="roundBar" style="display:none"></div><div id="gameBox" style="display:none;margin-top:10px"><div class="seg" id="segAim"></div><div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px"><div><div style="font-size:13px;color:var(--mute)">Очки</div><div id="scoreV" style="font:500 28px Oswald,Arial Narrow,system-ui,sans-serif">0</div></div><div style="flex:1;text-align:center;font-size:13px;color:var(--mute)"><div id="scoreSub"></div><div id="oddsV" style="margin-top:2px"></div></div><button class="ib" id="bRec" style="width:auto;padding:0 14px;font:500 13px system-ui,sans-serif">Рекорды</button></div><button class="sg" id="rdNew" style="width:100%;margin-top:10px;flex:none">Новый раунд</button></div></div>
+<div id="gameBar" style="margin-top:10px"><div class="seg"><button class="sg gt" id="gmBtn">Режим игры</button><button class="sg gt" id="blindBtn">Скрыть заряд</button></div><div id="roundBar" style="display:none"></div></div>
 <div id="ver" style="display:none;text-align:center;font:500 15px system-ui,sans-serif;margin-top:10px;padding:8px 12px;border-radius:12px"></div><div id="dots"></div>
 <div id="count"></div>
-<div class="btns" style="margin-bottom:10px"><button id="spin" class="b">Крутить</button><button id="fire" class="b">Выстрел</button></div>
+<div class="btns" style="margin-bottom:10px"><button id="spin" class="b">Крутить</button><button id="fire" class="b">Выстрел</button><button id="fireSelf" class="b" style="display:none">В себя</button></div>
 <div class="btns"><button id="clear" class="b">Разрядить все</button><button id="fill" class="b">Зарядить все</button></div>
 <div class="btns" style="margin-top:10px"><button id="toRed" class="b">В красный</button><button id="toBlue" class="b">В синий</button></div>
 <div class="btns" style="margin-top:10px"><button id="random" class="b">Случайно</button></div>
 </div>
 <div class='sheet' id='shHist'><div class='sh'><h1>История</h1><button class='ib xc' aria-label='Закрыть'><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' aria-hidden='true'><path d='M6 6l12 12M18 6L6 18'/></svg></button></div><div class='sb'><div id='stats' style='font-size:14px;color:var(--mute);margin-bottom:6px'></div><div id='hlist'></div><button class='b' id='hClear' style='width:100%;margin-top:14px;flex:none'>Очистить историю</button></div></div>
-<div class='sheet' id='shRec'><div class='sh'><h1>Рекорды</h1><button class='ib xc' aria-label='Закрыть'><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' aria-hidden='true'><path d='M6 6l12 12M18 6L6 18'/></svg></button></div><div class='sb'><div id='recStats' style='font-size:14px;color:var(--mute);margin-bottom:6px;line-height:1.5'></div><div id='recList'></div><button class='b' id='gNew' style='width:100%;margin-top:14px;flex:none'>Новая игра (обнулить счёт)</button><button class='b' id='gWipe' style='width:100%;margin-top:10px;flex:none'>Стереть все рекорды</button></div></div>
-<div class='sheet' id='shCfg'><div class='sh'><h1>Настройки</h1><button class='ib xc' aria-label='Закрыть'><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' aria-hidden='true'><path d='M6 6l12 12M18 6L6 18'/></svg></button></div><div class='sb'><span class='fl' style='margin-top:4px'>Число камор</span><div class='seg' id='segN'></div><span class='fl'>Громкость</span><input type='range' id='vol' min='0' max='100' step='5' style='width:100%'><span class='fl'>Вероятность осечки: <span id='misv'>0</span>%</span><input type='range' id='mis' min='0' max='50' step='1' style='width:100%'><span class='fl'>Серия бросков</span><div class='seg' id='segS'></div><span class='fl'>Скорость вращения</span><input type='range' id='spd' min='1' max='10' step='1' style='width:100%'><div style='display:flex;justify-content:space-between;font-size:12px;color:var(--mute)'><span>Медленно</span><span>Быстро</span></div><span class='fl'>Тема</span><div class='seg' id='segT'></div><label class='fl' style='display:flex;align-items:center;gap:10px;color:var(--ink)'><input type='checkbox' id='vib'> Вибрация</label>
+<div class='sheet' id='shRec'><div class='sh'><h1>Рекорды</h1><button class='ib xc' aria-label='Закрыть'><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' aria-hidden='true'><path d='M6 6l12 12M18 6L6 18'/></svg></button></div><div class='sb'><div id='recStats' style='font-size:14px;color:var(--mute);margin-bottom:6px;line-height:1.5'></div><div id='recList'></div><button class='b' id='rdNew' style='width:100%;margin-top:14px;flex:none'>Новый раунд</button><button class='b' id='gNew' style='width:100%;margin-top:10px;flex:none'>Новая игра (обнулить счёт)</button><button class='b' id='gWipe' style='width:100%;margin-top:10px;flex:none'>Стереть все рекорды</button></div></div>
+<div class='sheet' id='shCfg'><div class='sh'><h1>Настройки</h1><button class='ib xc' aria-label='Закрыть'><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' aria-hidden='true'><path d='M6 6l12 12M18 6L6 18'/></svg></button></div><div class='sb'><span class='fl' style='margin-top:4px'>Число камор</span><div class='seg' id='segN'></div><span class='fl'>Громкость</span><input type='range' id='vol' min='0' max='100' step='5' style='width:100%'><span class='fl'>Вероятность осечки: <span id='misv'>0</span>%</span><input type='range' id='mis' min='0' max='50' step='1' style='width:100%'><span class='fl'>Серия бросков</span><div class='seg' id='segS'></div><span class='fl'>Скорость вращения</span><input type='range' id='spd' min='1' max='10' step='1' style='width:100%'><div style='display:flex;justify-content:space-between;font-size:12px;color:var(--mute)'><span>Медленно</span><span>Быстро</span></div><span class='fl'>Тема</span><div class='seg' id='segT'></div><label class='fl' style='display:flex;align-items:center;gap:10px;color:var(--ink)'><input type='checkbox' id='vib'> Вибрация</label><label class='fl' style='display:flex;align-items:center;gap:10px;color:var(--ink)'><input type='checkbox' id='fxsp'> Искры при раскрутке</label>
 <span class='fl'>Ракурс камеры</span>
 <div class='btns' style='margin-bottom:4px'><button class='b' id='camToggle' style='flex:1'>Режим ракурса</button><button class='b' id='camReset' style='flex:1'>Сбросить</button></div>
 <div class='seg' id='segCam'></div><span class='fl'>Смысл каждой камеры</span><div id='labs'></div></div></div>
@@ -789,6 +789,7 @@ $('vol').value=cfg.vol;$('vol').oninput=function(){cfg.vol=+this.value;if(master
 cfg.mis=Math.min(50,Math.max(0,+cfg.mis||0));$('mis').value=cfg.mis;$('misv').textContent=cfg.mis;$('mis').oninput=function(){cfg.mis=Math.min(50,Math.max(0,+this.value));$('misv').textContent=cfg.mis;saveCfg();};
 seg('segS',[[1,'Выкл'],[3,'3'],[5,'5']],cfg.ser||1,function(v){cfg.ser=v;saveCfg();renderCfg();});
 $('spd').value=cfg.spd;$('spd').oninput=function(){cfg.spd=+this.value;saveCfg();};
+$('fxsp').checked=cfg.fx!==false;$('fxsp').onchange=function(){cfg.fx=this.checked;saveCfg();};
 $('vib').checked=cfg.vib;$('vib').onchange=function(){cfg.vib=this.checked;saveCfg();applyVib();};
 $('camToggle').textContent=camMode?'Выйти из ракурса':'Режим ракурса';
 $('camToggle').onclick=function(){setCamMode(!camMode);renderCfg();};
@@ -831,7 +832,7 @@ $('bHist').onclick=function(){renderHist();openSheet('shHist');};
 $('bCfg').onclick=function(){renderCfg();openSheet('shCfg');};
 $('hClear').onclick=function(){hist=[];try{localStorage.removeItem('drumHist');}catch(e){}renderHist();};
 var xs=document.querySelectorAll('.xc');for(var j=0;j<xs.length;j++)xs[j].onclick=closeSheets;
-$('fire').onclick=function(){drag=null;fire();};
+$('fire').onclick=function(){drag=null;if(cfg.game){cfg.aim='fwd';saveCfg();}fire();};
 $('sub').textContent=N+' камор, один исход';
 applyTheme();applyVib();
 var ser=null,verEl=$('ver'),BG=['var(--okbg)','var(--redbg)','var(--bluebg)'];
@@ -921,7 +922,7 @@ function frame(now){
   }
   if(cfg.blind)for(var bq=0;bq<N;bq++)carts[bq].visible=false;
 
-  var dt=Math.min(0.05,(now-(frame.l||now))/1000);frame.l=now;
+  var dt=Math.min(0.05,(now-(frame.l||now))/1000);frame.l=now;sparkFx(dt);
 
   /* ejected cartridges physics */
   for(var e2=ej.length-1;e2>=0;e2--){
@@ -996,8 +997,7 @@ function frame(now){
       bu.m.scale.setScalar(1.35*bf);
     }
     if(bu.age>bu.life){
-      scene.remove(bu.m);
-      if(bu.light)scene.remove(bu.light);
+      scene.remove(bu.m);      if(bu.light)scene.remove(bu.light);
       if(bu.glow){scene.remove(bu.glow);if(bu.glow.material.map)bu.glow.material.map.dispose();bu.glow.material.dispose();}
       if(bu.streak){scene.remove(bu.streak);if(bu.streak.material.map)bu.streak.material.map.dispose();bu.streak.material.dispose();}
       bullets.splice(b2,1);
@@ -1007,13 +1007,13 @@ function frame(now){
   /* sparks */
   for(var p2=particles.length-1;p2>=0;p2--){
     var pr=particles[p2];
-    pr.v.y-=6*dt;pr.m.position.addScaledVector(pr.v,dt);
+    pr.v.y-=(pr.g==null?6:pr.g)*dt;if(pr.drag)pr.v.multiplyScalar(Math.max(0,1-pr.drag*dt));pr.m.position.addScaledVector(pr.v,dt);
     pr.m.lookAt(camera.position);
     pr.age+=dt;
     var pf=Math.max(0,1-pr.age/pr.life);
     pr.m.material.opacity=pf;
-    pr.m.scale.setScalar(0.85+pf*0.4);
-    if(pr.age>pr.life){scene.remove(pr.m);if(pr.m.material.map)pr.m.material.map.dispose();pr.m.material.dispose();particles.splice(p2,1);}
+    pr.m.scale.setScalar((pr.base||1)*(0.85+pf*0.4));
+    if(pr.age>pr.life){scene.remove(pr.m);if(pr.m.material.map&&!pr.shared)pr.m.material.map.dispose();pr.m.material.dispose();particles.splice(p2,1);}
   }
   /* smoke */
   for(var s2=smoke.length-1;s2>=0;s2--){
@@ -1320,20 +1320,19 @@ function updGame(){
   if(gs.rd.started&&gs.rd.tot!==N){gs.rd=newRd(gs.rd.n+1);saveGs();}
   if(!gs.rd.started)gs.rd.tot=N;
   document.body.classList.toggle('blind',!!cfg.blind);
-  $('gmBtn').className='sg'+(cfg.game?' on':'');$('blindBtn').className='sg'+(cfg.blind?' on':'');
-  $('gameBox').style.display=cfg.game?'block':'none';
-  seg('segAim',[['fwd','Вперёд'],['self','В себя']],cfg.aim==='self'?'self':'fwd',function(v){cfg.aim=v;saveCfg();refresh(true);});
-  $('scoreV').textContent=gs.score;
-  $('scoreSub').textContent='Рекорд '+gs.top+' · серия '+gs.streak;
-  var o=gameOdds()[cfg.aim==='self'?'self':'fwd'];
-  $('oddsV').textContent=cfg.blind?'Награда зависит от шанса':'Сейчас: +'+o.win+' / −'+o.lose;
+  $('gmBtn').className='sg gt'+(cfg.game?' on':'');$('blindBtn').className='sg gt'+(cfg.blind?' on':'');
   var rd=gs.rd,rb=$('roundBar'),l1='',l2='';
-  if(cfg.game)l1="<div style='font:600 13px system-ui,sans-serif;color:var(--brass);letter-spacing:.04em'>РАУНД "+rd.n+" · "+(rd.started?'ИДЁТ · выстрелов '+rd.shots+' · '+sgn(rd.pts):'ПОДГОТОВКА')+"</div>";
+  if(cfg.game)l1="<div class='rl'><span class='rt'>РАУНД "+rd.n+" · "+(rd.started?'ИДЁТ · '+rd.shots+' выстр. · '+sgn(rd.pts):'ПОДГОТОВКА')+"</span><span>Очки <b>"+gs.score+"</b> ›</span></div>";
   if(cfg.blind){var rc=rd.started?rd.red:loaded.filter(function(v){return v===1;}).length,bc=rd.started?rd.blue:loaded.filter(function(v){return v===2;}).length;
-    l2="<div style='margin-top:2px'>"+(rd.started?'При старте раунда':'Сейчас в барабане')+': красных '+rc+', синих '+bc+' из '+N+(rd.started?' (не обновляется)':'')+"</div>";}
+    l2="<div class='rc'>"+(rd.started?'При старте':'Сейчас в барабане')+': красных '+rc+', синих '+bc+' из '+N+(rd.started?' · не меняется':'')+"</div>";}
   rb.innerHTML=l1+l2;rb.style.display=(cfg.game||cfg.blind)?'block':'none';
-  $('fire').textContent=cfg.game?(cfg.aim==='self'?'Выстрел в себя':'Выстрел вперёд'):'Выстрел';
-  $('hint').textContent=cfg.blind?'Заряд скрыт. Нажмите «Случайно», затем крутите и стреляйте.':HINT0;
+  var o=gameOdds(),f=$('fire'),sf=$('fireSelf');
+  if(cfg.game){
+    f.innerHTML='Вперёд'+(cfg.blind?'':'<small>+'+o.fwd.win+' / \u2212'+o.fwd.lose+'</small>');
+    sf.innerHTML='В себя'+(cfg.blind?'':'<small>+'+o.self.win+' / \u2212'+o.self.lose+'</small>');
+    sf.style.display='flex';
+  }else{f.textContent='Выстрел';sf.style.display='none';}
+  $('hint').textContent=cfg.blind?'Заряд скрыт. «Случайно», затем крутите и стреляйте.':HINT0;
 }
 function setBlind(on){
   if(on&&gs.rd.started)endRound();
@@ -1360,10 +1359,52 @@ function newGame(){
   if(gs.shots>0){gs.sessions.push({s:gs.score,sh:gs.shots,h:gs.hits,t:Date.now()});gs.sessions.sort(function(a,b){return b.s-a.s;});gs.sessions=gs.sessions.slice(0,10);}
   gs.score=0;gs.shots=0;gs.hits=0;gs.streak=0;gs.rounds=[];gs.rd=newRd(1);saveGs();renderRec();refresh(true);
 }
-$('bRec').onclick=function(){renderRec();openSheet('shRec');};
+$('roundBar').onclick=function(){renderRec();openSheet('shRec');};
 $('gNew').onclick=newGame;
-$('rdNew').onclick=function(){if(netOn())return;endRound();if(cfg.blind)autoLoad();else showVer('Новый раунд: '+gs.rd.n,null);refresh(true);};
+$('fireSelf').onclick=function(){drag=null;cfg.aim='self';saveCfg();fire();};
+$('rdNew').onclick=function(){if(netOn())return;closeSheets();endRound();if(cfg.blind)autoLoad();else showVer('Новый раунд: '+gs.rd.n,null);refresh(true);};
 $('gWipe').onclick=function(){gs={score:0,shots:0,hits:0,streak:0,top:0,bestStreak:0,tShots:0,tHits:0,sessions:[],rounds:[],bestRound:0,rd:newRd(1)};saveGs();renderRec();refresh(true);};
+
+/* ===== Cosmetic sparks / fireworks during a strong, long spin ===== */
+var fxHeat=0,fxPrev=null,fxBurstT=0,fxTex={},fxGeo=null;
+function fwTex(k){
+  k=k%7;if(fxTex[k])return fxTex[k];
+  var pal=[[255,170,0],[255,90,20],[255,45,120],[40,140,255],[30,200,110],[170,90,255],[255,215,40]][k];
+  var c=document.createElement('canvas');c.width=c.height=32;var x=c.getContext('2d');
+  var g=x.createRadialGradient(16,16,0,16,16,16);g.addColorStop(0,'rgba('+pal.join(',')+',1)');g.addColorStop(0.45,'rgba('+pal.join(',')+',0.95)');g.addColorStop(1,'rgba('+pal.join(',')+',0)');
+  x.fillStyle=g;x.fillRect(0,0,32,32);fxTex[k]=new THREE.CanvasTexture(c);return fxTex[k];
+}
+function fxSpark(pos,vel,k,size,life,g,drag){
+  if(particles.length>450)return;
+  if(!fxGeo)fxGeo=new THREE.PlaneGeometry(1,1);
+  var m=new THREE.Mesh(fxGeo,new THREE.MeshBasicMaterial({map:fwTex(k),transparent:true,depthWrite:false,toneMapped:false}));
+  m.position.copy(pos);m.scale.setScalar(size);
+  particles.push({m:m,v:vel,life:life,age:0,spin:0,g:g,drag:drag,shared:true,base:size});scene.add(m);
+}
+function fwBurst(){
+  var a=Math.random()*6.283,r=RING*(0.5+Math.random()*1.1),c=new THREE.Vector3(r*Math.cos(a),r*Math.sin(a),1.05),k=Math.floor(Math.random()*6),n=26;
+  for(var i=0;i<n;i++){
+    var u=Math.random()*6.283,w=Math.acos(2*Math.random()-1),sp=1.4+Math.random()*2.4;
+    var v=new THREE.Vector3(Math.sin(w)*Math.cos(u),Math.sin(w)*Math.sin(u),Math.cos(w)*0.6).multiplyScalar(sp);
+    fxSpark(c.clone(),v,Math.random()<0.25?6:k,0.09+Math.random()*0.07,0.8+Math.random()*0.6,2.4,1.1);
+  }
+}
+function sparkFx(dt){
+  if(cfg.fx===false||!dt){fxPrev=theta;return;}
+  if(fxPrev===null)fxPrev=theta;
+  var om=(theta-fxPrev)/dt,sp=Math.abs(om);fxPrev=theta;
+  if(sp>7&&!camMode)fxHeat+=dt;else fxHeat=Math.max(0,fxHeat-dt*2.5);
+  if(fxHeat>0.3){
+    var dir=om>0?1:-1,nr=Math.min(5,Math.round((sp-4)*dt*16)+1),tv=2.5+Math.min(sp,45)*0.12;
+    for(var i=0;i<nr;i++){
+      var a=Math.random()*6.283,R=RING*(1.1+Math.random()*0.18),pos=new THREE.Vector3(R*Math.cos(a),R*Math.sin(a),0.9);
+      var vel=new THREE.Vector3(-Math.sin(a)*dir*tv+Math.cos(a)*1.4,Math.cos(a)*dir*tv+Math.sin(a)*1.4+1,0.8+Math.random());
+      fxSpark(pos,vel,[0,1,6][i%3],0.1+Math.random()*0.08,0.45+Math.random()*0.4,5,0.6);
+    }
+  }
+  fxBurstT-=dt;
+  if(fxHeat>0.9&&fxBurstT<=0){fxBurstT=0.26+Math.random()*0.24;fwBurst();}
+}
 
 refresh(true);requestAnimationFrame(frame);
 })();
@@ -1380,7 +1421,16 @@ body.blind #dots,body.blind #chance,body.blind #count,body.blind #clear,body.bli
 .fp.sm{font-size:20px}
 .fp.pos{color:#7dff9a}.fp.neg{color:#ff6a5e}
 @keyframes fpUp{0%{opacity:0;transform:translate(-50%,0) scale(.6)}15%{opacity:1;transform:translate(-50%,-12px) scale(1.25)}100%{opacity:0;transform:translate(calc(-50% + var(--dx,0px)),-95px) scale(1)}}
-#roundBar{margin-top:10px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;font:13px system-ui,sans-serif;color:var(--mute);text-align:center}
+#roundBar{margin-top:8px;margin-bottom:12px;padding:7px 12px;border:1px solid var(--line);border-radius:12px;font:13px system-ui,sans-serif;color:var(--mute);text-align:left;cursor:pointer}
+#roundBar .rl{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+#roundBar .rt{font:600 12px system-ui,sans-serif;color:var(--brass);letter-spacing:.04em}
+#roundBar b{color:var(--ink);font:500 17px Oswald,"Arial Narrow",system-ui,sans-serif}
+#roundBar .rc{margin-top:2px}
+.sg.gt{height:36px;font-size:14px}
+button#spin,button#fire,button#fireSelf{font-size:16px}
+button#fire,button#fireSelf{display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
+button#fireSelf{background:transparent;color:var(--red);border:2px solid var(--red);height:56px;border-radius:28px;display:none}
+button#fire small,button#fireSelf small{font:400 11px system-ui,sans-serif;opacity:.85;margin-top:1px}
 </style>
 </body>
 </html>
