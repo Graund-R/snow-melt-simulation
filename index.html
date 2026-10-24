@@ -544,7 +544,7 @@ function toggle(i){
 function spinning(){return !!(tween&&tween.dur>0.4)||!!(drag&&drag.moved>6);}
 
 canvas.addEventListener('pointerdown',function(e){
-try{canvas.setPointerCapture(e.pointerId);}catch(x){}
+if(e.pointerType!=='touch'){try{canvas.setPointerCapture(e.pointerId);}catch(x){}}
 audio();
 if(!camMode&&typeof netEnabled!=='undefined'&&netEnabled&&netConn&&netConn.open){netPtr={sx:e.clientX,sy:e.clientY,t0:performance.now()};return;}
 if(camMode){
@@ -1255,7 +1255,7 @@ if ("serviceWorker" in navigator) {
 </html>
 
 <style id="mobile-scroll-fix-v2">
-/* Let vertical finger gestures scroll the page even when they start over the 3D canvas. */
+/* Allow vertical finger gestures to scroll; mouse dragging still captures the pointer. */
 canvas#cv { touch-action: pan-y pinch-zoom; }
 #stage { flex: none; height: min(34dvh, 300px); min-height: 190px; }
 @media (max-height: 700px) { #stage { height: 30dvh; min-height: 170px; } }
@@ -1274,12 +1274,6 @@ body { display: block !important; overflow-x: hidden !important; overflow-y: aut
     var canvas = document.getElementById('cv');
     if (canvas) {
       canvas.style.touchAction = 'pan-y pinch-zoom';
-      canvas.addEventListener('pointerdown', function (e) {
-        if (Math.abs(e.movementY || 0) > Math.abs(e.movementX || 0)) {
-          document.documentElement.style.overflowY = 'auto';
-          document.body.style.overflowY = 'auto';
-        }
-      }, { passive: true });
     }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', enableScroll);
