@@ -1260,3 +1260,29 @@ canvas#cv { touch-action: pan-y pinch-zoom; }
 #stage { flex: none; height: min(34dvh, 300px); min-height: 190px; }
 @media (max-height: 700px) { #stage { height: 30dvh; min-height: 170px; } }
 </style>
+
+<style id="mobile-scroll-fix-v3">
+html, body { height: auto !important; min-height: 100% !important; overflow: visible !important; }
+body { display: block !important; overflow-x: hidden !important; overflow-y: auto !important; }
+#app { position: relative !important; height: auto !important; min-height: 100dvh !important; overflow: visible !important; }
+#stage { height: 220px !important; min-height: 220px !important; }
+#cv { touch-action: pan-y pinch-zoom !important; }
+</style>
+<script id="mobile-scroll-fix-v3-js">
+(function () {
+  function enableScroll() {
+    var canvas = document.getElementById('cv');
+    if (canvas) {
+      canvas.style.touchAction = 'pan-y pinch-zoom';
+      canvas.addEventListener('pointerdown', function (e) {
+        if (Math.abs(e.movementY || 0) > Math.abs(e.movementX || 0)) {
+          document.documentElement.style.overflowY = 'auto';
+          document.body.style.overflowY = 'auto';
+        }
+      }, { passive: true });
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', enableScroll);
+  else enableScroll();
+})();
+</script>
