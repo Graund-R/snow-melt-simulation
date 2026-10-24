@@ -75,9 +75,6 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
 @media(max-height:700px){#stage{height:36dvh;min-height:230px}}
 /* New compact game layout */
 #mainHeader{padding:10px 16px 6px;align-items:center;flex:none}
-#mainHeader #roundStatus{margin-left:auto;margin-right:8px;display:flex;flex-direction:column;align-items:flex-end;gap:2px;font:12px system-ui,sans-serif;color:var(--mute)}
-#statusRound{font-weight:700;color:var(--ink);font-size:14px}
-#statusScore:empty{display:none}
 #menuShade{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:19;opacity:0;pointer-events:none;transition:opacity .18s}
 #menuDrawer{position:fixed;z-index:20;top:0;right:0;bottom:0;width:min(340px,88vw);background:var(--bg);border-left:1px solid var(--line);box-shadow:-12px 0 36px rgba(0,0,0,.18);transform:translateX(105%);transition:transform .2s;overflow:auto;padding:calc(10px + env(safe-area-inset-top,0px)) 14px calc(18px + env(safe-area-inset-bottom,0px));box-sizing:border-box;font-family:system-ui,sans-serif}
 body.menuOpen #menuDrawer{transform:translateX(0)}body.menuOpen #menuShade{opacity:1;pointer-events:auto}
@@ -98,7 +95,7 @@ body.menuOpen #menuDrawer{transform:translateX(0)}body.menuOpen #menuShade{opaci
 </head>
 <body>
 <div id="app">
-<header id="mainHeader"><div><h1>Барабан</h1><p id="sub"></p></div><div id="roundStatus"><span id="statusRound">Раунд</span><span id="statusScore"></span></div><button class="ib" id="menuBtn" aria-label="Открыть меню" title="Меню"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></header><div id="menuShade"></div><aside id="menuDrawer" aria-label="Меню игры"><div class="drawerHead"><strong>Меню</strong><button class="ib" id="menuClose" aria-label="Закрыть меню">×</button></div><div class="drawerTools"><button class='ib' id='camBtn' aria-label='Режим ракурса' title='Режим ракурса: перетаскивайте, чтобы вращать камеру'>Ракурс</button><button class='ib' id='onlineToggle' aria-label='Показать или скрыть подключение' aria-expanded='false' title='Подключение'>Онлайн</button><button class='ib' id='immersiveBtn' aria-label='Режим без интерфейса' title='Режим без интерфейса'>Без UI</button><button class='ib' id='bHist' aria-label='История'><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><circle cx='12' cy='12' r='9'/><path d='M12 7v5l3 2'/></svg></button><button class='ib' id='bCfg' aria-label='Настройки'><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M4 7h9M17 7h3M4 17h3M11 17h9'/><circle cx='15' cy='7' r='2'/><circle cx='9' cy='17' r='2'/></svg></button><button id="snd" aria-label="Звук включён" aria-pressed="true" style="width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);padding:0;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/><line id="slash" x1="3" y1="3" x2="21" y2="21" visibility="hidden"/></svg></button></div><section id="onlinePanel" class="collapsed" style="margin:0 16px 12px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--panel);font:14px system-ui,sans-serif">
+<header id="mainHeader"><div><h1>Барабан</h1></div><button class="ib" id="menuBtn" aria-label="Открыть меню" title="Меню"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></header><div id="menuShade"></div><aside id="menuDrawer" aria-label="Меню игры"><div class="drawerHead"><strong>Меню</strong><button class="ib" id="menuClose" aria-label="Закрыть меню">×</button></div><div class="drawerTools"><button class='ib' id='camBtn' aria-label='Режим ракурса' title='Режим ракурса: перетаскивайте, чтобы вращать камеру'>Ракурс</button><button class='ib' id='onlineToggle' aria-label='Показать или скрыть подключение' aria-expanded='false' title='Подключение'>Онлайн</button><button class='ib' id='immersiveBtn' aria-label='Режим без интерфейса' title='Режим без интерфейса'>Без UI</button><button class='ib' id='bHist' aria-label='История'><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><circle cx='12' cy='12' r='9'/><path d='M12 7v5l3 2'/></svg></button><button class='ib' id='bCfg' aria-label='Настройки'><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M4 7h9M17 7h3M4 17h3M11 17h9'/><circle cx='15' cy='7' r='2'/><circle cx='9' cy='17' r='2'/></svg></button><button id="snd" aria-label="Звук включён" aria-pressed="true" style="width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);padding:0;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/><line id="slash" x1="3" y1="3" x2="21" y2="21" visibility="hidden"/></svg></button></div><section id="onlinePanel" class="collapsed" style="margin:0 16px 12px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--panel);font:14px system-ui,sans-serif">
   <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px"><strong>Онлайн · 2 игрока</strong><span id="netStatus" style="color:var(--mute);font-size:12px">Не подключено</span></div>
   <div style="display:flex;gap:8px;flex-wrap:wrap"><button id="netCreate" class="b" style="height:42px;flex:1;min-width:120px">Создать матч</button><button id="netDisconnect" class="b" style="height:42px;flex:1;min-width:120px" disabled>Отключиться</button></div>
   <div id="netShareWrap" style="display:none;margin-top:8px"><div style="font-size:12px;color:var(--mute);margin-bottom:4px">Код матча (второй игрок вводит его или открывает ссылку)</div><div style="display:flex;gap:8px"><input id="netShare" class="tx" readonly style="margin:0;min-width:0"><button id="netCopy" class="b" style="height:44px;flex:0 0 88px">Ссылка</button></div></div>
@@ -448,7 +445,6 @@ function rebuildN(newN){
   buildDrumContents();
   /* move indicator ring/halo to new top chamber radius */
   if(typeof ring!=='undefined'&&ring){ring.position.y=RING;halo.position.y=RING;}
-  $('sub').textContent=N+' камор, один исход';
   lastKey='';
   refresh(true);
   renderCfg();
@@ -958,7 +954,6 @@ function fireWithAim(aim){
   else fire();
 }
 $('fire').onclick=function(){fireWithAim(cfg.game?'fwd':(cfg.aim||'fwd'));};
-$('sub').textContent=N+' камор, один исход';
 applyTheme();applyVib();
 var ser=null,verEl=$('ver'),BG=['var(--okbg)','var(--redbg)','var(--bluebg)'];
 function showVer(t,w){verEl.style.display='block';verEl.textContent=t;verEl.style.background=w==null?'var(--panel)':BG[w];verEl.style.color=w==null?'var(--mute)':COL[w];}
@@ -1557,7 +1552,7 @@ function updGame(){
   if(gs.rd.started&&gs.rd.tot!==N){gs.rd=newRd(gs.rd.n+1);saveGs();}
   if(!gs.rd.started)gs.rd.tot=N;
   document.body.classList.toggle('blind',!!cfg.blind);
-  $('gmBtn').className='sg gt'+(cfg.game?' on':'');$('blindBtn').className='sg gt'+(cfg.blind?' on':'');
+  $('gmBtn').className='sg gt'+(cfg.game?' on':'');$('blindBtn').className='eyeBtn'+(cfg.blind?' on':'');
   var rd=gs.rd,rb=$('roundBar'),l1='',l2='',c=chargeCounts();
   if(cfg.game)l1="<div class='rl'><span class='rt'>РАУНД "+rd.n+" · "+(rd.started?'ИДЁТ · '+rd.shots+' выстр. · '+sgn(rd.pts):'ПОДГОТОВКА')+(rd.bet?' · ставка '+rd.bet:'')+"</span><span>Очки <b>"+gs.score+"</b> ›</span></div>";
   if(cfg.game||cfg.blind){
@@ -1609,6 +1604,7 @@ function updGame(){
 }
 function setBlind(on){
   document.body.classList.toggle('blindMode',!!on);
+  document.body.classList.toggle('blind',!!on);
   if(on&&gs.rd.started)endRound();
   cfg.blind=!!on;resetGameKnowledge();saveCfg();ser=null;verEl.style.display='none';
   if(!on)for(var i=0;i<N;i++){carts[i].visible=!!loaded[i];}
@@ -1746,7 +1742,7 @@ button#fire,button#fireSelf{display:flex;flex-direction:column;align-items:cente
 button#fireSelf{background:transparent;color:var(--red);border:2px solid var(--red);height:56px;border-radius:28px;display:none}
 button#fire small,button#fireSelf small{font:400 11px system-ui,sans-serif;opacity:.85;margin-top:1px}
 </style>
-<script>(function(){var body=document.body;function close(){body.classList.remove('menuOpen')}document.getElementById('menuBtn').addEventListener('click',function(){body.classList.add('menuOpen')});document.getElementById('menuClose').addEventListener('click',close);document.getElementById('menuShade').addEventListener('click',close);document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});['bCfg','bHist','camBtn','immersiveBtn'].forEach(function(id){document.getElementById(id).addEventListener('click',close)});var sub=document.getElementById('sub'),sr=document.getElementById('statusRound'),ss=document.getElementById('statusScore');function status(){sr.textContent=(sub.textContent||'').trim()||'Барабан';var res=document.getElementById('res');ss.textContent=res&&res.textContent||''}status();setInterval(status,700);})();</script></body>
+<script>(function(){var body=document.body;function close(){body.classList.remove('menuOpen')}document.getElementById('menuBtn').addEventListener('click',function(){body.classList.add('menuOpen')});document.getElementById('menuClose').addEventListener('click',close);document.getElementById('menuShade').addEventListener('click',close);document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});['bCfg','bHist','camBtn','immersiveBtn'].forEach(function(id){document.getElementById(id).addEventListener('click',close)});})();</script></body>
 </html>
 
 <style id="mobile-scroll-fix-v2">
