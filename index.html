@@ -1742,37 +1742,14 @@ button#fire,button#fireSelf{display:flex;flex-direction:column;align-items:cente
 button#fireSelf{background:transparent;color:var(--red);border:2px solid var(--red);height:56px;border-radius:28px;display:none}
 button#fire small,button#fireSelf small{font:400 11px system-ui,sans-serif;opacity:.85;margin-top:1px}
 </style>
-<script>(function(){var body=document.body;function close(){body.classList.remove('menuOpen')}document.getElementById('menuBtn').addEventListener('click',function(){body.classList.add('menuOpen')});document.getElementById('menuClose').addEventListener('click',close);document.getElementById('menuShade').addEventListener('click',close);document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});['bCfg','bHist','camBtn','immersiveBtn'].forEach(function(id){document.getElementById(id).addEventListener('click',close)});})();</script></body>
+<script>(function(){var body=document.body;function close(){body.classList.remove('menuOpen')}document.getElementById('menuBtn').addEventListener('click',function(){body.classList.add('menuOpen')});document.getElementById('menuClose').addEventListener('click',close);document.getElementById('menuShade').addEventListener('click',close);document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});['bCfg','bHist','camBtn','immersiveBtn'].forEach(function(id){document.getElementById(id).addEventListener('click',close)});})();</script><style id="mobile-scroll-fix">
+/* Keep normal touch gestures available for page scrolling on mobile. */
+html, body { height: auto !important; min-height: 100% !important; overflow-x: hidden !important; overflow-y: auto !important; }
+body { overscroll-behavior-y: auto !important; }
+#app { height: auto !important; min-height: 100dvh !important; overflow: visible !important; }
+#stage { height: 220px !important; min-height: 220px !important; touch-action: pan-y !important; }
+#cv { touch-action: pan-y !important; }
+body.immersive #stage, body.immersive #cv { touch-action: none !important; }
+</style>
+</body>
 </html>
-
-<style id="mobile-scroll-fix-v2">
-/* Allow vertical finger gestures to scroll; mouse dragging still captures the pointer. */
-canvas#cv { touch-action: none; }
-#stage { flex: none; height: min(34dvh, 300px); min-height: 190px; }
-@media (max-height: 700px) { #stage { height: 30dvh; min-height: 170px; } }
-</style>
-
-<style id="mobile-scroll-fix-v3">
-html, body { height: auto !important; min-height: 100% !important; overflow: visible !important; }
-body { display: block !important; overflow-x: hidden !important; overflow-y: auto !important; }
-#app { position: relative !important; height: auto !important; min-height: 100dvh !important; overflow: visible !important; }
-#stage { height: 220px !important; min-height: 220px !important; }
-#cv { touch-action: none !important; }
-html, body { overscroll-behavior: none !important; }
-#stage { touch-action: none; }
-</style>
-<script id="mobile-scroll-fix-v3-js">
-(function () {
-  function enableScroll() {
-    var canvas = document.getElementById('cv');
-    if (canvas) {
-      canvas.style.touchAction = 'none';
-      var blk=function(e){if(e.cancelable)e.preventDefault();};
-      canvas.addEventListener('touchstart',blk,{passive:false});
-      canvas.addEventListener('touchmove',blk,{passive:false});
-    }
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', enableScroll);
-  else enableScroll();
-})();
-</script>
