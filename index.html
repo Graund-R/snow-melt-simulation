@@ -177,7 +177,7 @@ body:has(.sheet.open){overflow:hidden}
 </head>
 <body>
 <div id="app">
-<header id="mainHeader"><h1>Барабан</h1><div class="hdrBtns"><button class="sg gt" id="gmBtn" aria-label="Режим игры">Игра</button><button id="blindBtn" class="eyeBtn" aria-label="Скрыть заряд" title="Скрыть заряд"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="eyeSlash" d="M3 3 21 21"/></svg></button><button class="ib" id="menuBtn" aria-label="Открыть меню" title="Меню"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></div></header><div id="menuShade"></div><aside id="menuDrawer" aria-label="Меню"><div class="drawerHead"><strong>Меню</strong><button class="ib" id="menuClose" aria-label="Закрыть меню">×</button></div><div class="drawerTools">
+<header id="mainHeader"><h1>Барабан</h1><div class="hdrBtns"><button class="sg gt" id="gmBtn" aria-label="Режим игры">Игра</button><button id="blindBtn" class="eyeBtn" aria-label="Скрыть заряд" title="Скрыть заряд"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="eyeSlash" d="M3 3 21 21"/></svg></button><button id="hdrImmersiveBtn" class="eyeBtn" aria-label="Без UI" title="Без UI"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 21h8"/></svg></button><button class="ib" id="menuBtn" aria-label="Открыть меню" title="Меню"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></div></header><div id="menuShade"></div><aside id="menuDrawer" aria-label="Меню"><div class="drawerHead"><strong>Меню</strong><button class="ib" id="menuClose" aria-label="Закрыть меню">×</button></div><div class="drawerTools">
 <button class="mi" id="camBtn" aria-label="Режим ракурса" title="Перетаскивайте, чтобы вращать камеру"><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M3 8h4l2-3h6l2 3h4v11H3z'/><circle cx='12' cy='13' r='3.5'/></svg><span>Ракурс камеры</span></button>
 <button class="mi" id="immersiveBtn" aria-label="Режим без интерфейса" title="Режим без интерфейса">Без UI</button><button class="mi" id="doomBtn" aria-label="Режим Doom" aria-pressed="false" title="Таймер на выстрел, красный экран, всё быстрее"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1 3 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9Z"/></svg>Режим Doom</button>
 <button class="mi" id="onlineToggle" aria-label="Подключение" aria-expanded="false"><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><circle cx='9' cy='8' r='3'/><circle cx='17' cy='9' r='2.4'/><path d='M3 19c0-3.3 2.7-5.5 6-5.5s6 2.200 6 5.500M15 14c3 0 6 1.500 6 5'/></svg><span>Онлайн</span></button>
@@ -202,12 +202,12 @@ body:has(.sheet.open){overflow:hidden}
 <div id="ver" style="display:none;text-align:center;font:500 15px system-ui,sans-serif;padding:8px 12px;border-radius:12px"></div>
 <div id="dots"></div><div id="count"></div>
 <div class="btns mainActions"><div class="rotRow"><button id="random" class="b ic" aria-label="Случайное заполнение" title="Случайное заполнение"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="6.2" r="1.9"/><circle cx="17" cy="9.1" r="1.9"/><circle cx="17" cy="14.9" r="1.9"/><circle cx="12" cy="17.8" r="1.9"/><circle cx="7" cy="14.9" r="1.9"/><circle cx="7" cy="9.1" r="1.9"/></svg></button><button id="spin" class="b ic" aria-label="Крутить барабан" title="Крутить барабан"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></button></div><button id="fire" class="b">Выстрел</button><button id="fireSelf" class="b">В себя</button></div>
-<div id="quickRow"><button type="button" class="chip" id="doomQuick" aria-pressed="false" title="Таймер на выстрел, красный экран, всё быстрее"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c1 3 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9Z"/></svg><span>Doom</span></button><button type="button" class="chip" id="cfgQuick" title="Настройки, не прерывая игру"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg><span>Настройки</span></button></div>
+<div id="quickRow"><button type="button" class="chip" id="doomQuick" aria-pressed="false" title="Таймер на выстрел, красный экран, всё быстрее"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c1 3 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9Z"/></svg><span>Doom</span></button></div>
 <details id="editTools"><summary>Заряд камор</summary><div class="editGrid"><button id="clear" class="b">Разрядить все</button><button id="fill" class="b">Зарядить все</button><button id="toRed" class="b">В красный</button><button id="toBlue" class="b">В синий</button><label><input type="checkbox" id="randBlue"> Включая синие</label></div></details>
 </div>
 <div class='sheet' id='shHist'><div class='sh'><h1>История</h1><div class='shA'><button class='ib' id='hClear' aria-label='Очистить историю' title='Очистить историю'><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6'/></svg></button><button class='ib xc' aria-label='Закрыть'><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' aria-hidden='true'><path d='M6 6l12 12M18 6L6 18'/></svg></button></div></div><div class='sb'><div id='stats' style='font-size:14px;color:var(--mute);margin-bottom:6px'></div><div id='hlist'></div></div></div>
 <div class='sheet' id='shRec'><div class='sh'><h1>Рекорды</h1><button class='ib xc' aria-label='Закрыть'><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' aria-hidden='true'><path d='M6 6l12 12M18 6L6 18'/></svg></button></div><div class='sb'><div id='recStats' style='font-size:14px;color:var(--mute);margin-bottom:6px;line-height:1.5'></div><div id='recList'></div><button class='b' id='rdNew' style='width:100%;margin-top:14px;flex:none'>Новый раунд</button><button class='b' id='gNew' style='width:100%;margin-top:10px;flex:none'>Новая игра (обнулить счёт)</button><button class='b danger' id='gWipe' style='width:100%;margin-top:10px;flex:none'>Стереть все рекорды</button></div></div>
-<div class='sheet' id='shCfg'><div class='sh'><h1>Настройки</h1><button class='ib xc' aria-label='Закрыть'><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' aria-hidden='true'><path d='M6 6l12 12M18 6L6 18'/></svg></button></div><div class='sb'><div class='gh' style='margin-top:4px'>Барабан</div><span class='fl'>Число камор</span><div class='seg' id='segN'></div><span class='fl'>Вероятность осечки: <span id='misv'>0</span>%</span><input type='range' id='mis' min='0' max='50' step='1' style='width:100%'><span class='fl'>Серия бросков</span><div class='seg' id='segS'></div><span class='fl'>Скорость вращения</span><input type='range' id='spd' min='1' max='10' step='1' style='width:100%'><div class='rng'><span>Медленно</span><span>Быстро</span></div><span class='fl'>Смысл каждой камеры</span><div id='labs'></div><div class='gh'>Звук</div><span class='fl'>Громкость</span><input type='range' id='vol' min='0' max='100' step='5' style='width:100%'><label class='row'><span>Вибрация</span><input type='checkbox' id='vib'></label><label class='row'><span>Музыка в режиме Doom</span><input type='checkbox' id='doomMus'></label><label class='row'><span>Фоновая музыка (песочница и игра)</span><input type='checkbox' id='bgMus'></label><div class='gh'>Вид</div><span class='fl'>Тема</span><div class='seg' id='segT'></div><label class='row'><span>Искры при раскрутке</span><input type='checkbox' id='fxsp'></label><span class='fl'>Ракурс камеры</span><div class='seg' id='segCam'></div><div class='btns' style='margin-top:8px'><button class='b' id='camReset' style='flex:1'>Сбросить ракурс</button></div></div></div>
+<div class='sheet' id='shCfg'><div class='sh'><h1>Настройки</h1><button class='ib xc' aria-label='Закрыть'><svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' aria-hidden='true'><path d='M6 6l12 12M18 6L6 18'/></svg></button></div><div class='sb'><div class='gh' style='margin-top:4px'>Барабан</div><span class='fl'>Число камор</span><div class='seg' id='segN'></div><span class='fl'>Вероятность осечки: <span id='misv'>0</span>%</span><input type='range' id='mis' min='0' max='50' step='1' style='width:100%'><span class='fl'>Серия бросков</span><div class='seg' id='segS'></div><span class='fl'>Скорость вращения</span><input type='range' id='spd' min='1' max='10' step='1' style='width:100%'><div class='rng'><span>Медленно</span><span>Быстро</span></div><label class='row'><span>Автозавершение раунда (когда патроны кончились)</span><input type='checkbox' id='autoEndRound'></label><div class='gh'>Звук</div><span class='fl'>Громкость</span><input type='range' id='vol' min='0' max='100' step='5' style='width:100%'><label class='row'><span>Вибрация</span><input type='checkbox' id='vib'></label><label class='row'><span>Музыка в режиме Doom</span><input type='checkbox' id='doomMus'></label><label class='row'><span>Фоновая музыка (песочница и игра)</span><input type='checkbox' id='bgMus'></label><div class='gh'>Вид</div><span class='fl'>Тема</span><div class='seg' id='segT'></div><label class='row'><span>Искры при раскрутке</span><input type='checkbox' id='fxsp'></label><span class='fl'>Ракурс камеры</span><div class='seg' id='segCam'></div><div class='btns' style='margin-top:8px'><button class='b' id='camReset' style='flex:1'>Сбросить ракурс</button></div></div></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js';document.head.appendChild(s)"></script>
@@ -219,12 +219,13 @@ im.onload=function(){try{var ic=document.createElement('canvas');ic.width=ic.hei
 im.src=document.querySelector('link[rel="icon"]').href;
 }catch(e){}
 
-var cfg={n:6,vol:80,theme:'auto',vib:true,spd:5,ser:1,mis:0,labels:[],game:false,blind:false,aim:'fwd',randBlue:false};
+var cfg={n:6,vol:80,theme:'auto',vib:true,spd:5,ser:1,mis:0,labels:[],game:false,blind:false,aim:'fwd',randBlue:false,autoEndRound:true};
 try{var c0=JSON.parse(localStorage.getItem('drumCfg'));if(c0)for(var k0 in c0)cfg[k0]=c0[k0];}catch(e){}
 /* каждый новый запуск начинается в песочнице: игра и Doom включаются вручную */
 cfg.game=false;cfg.doom=false;
 cfg.n=+cfg.n||6;if([5,6,8,10].indexOf(cfg.n)<0)cfg.n=6;
 if(typeof cfg.randBlue!=='boolean')cfg.randBlue=false;
+if(typeof cfg.autoEndRound!=='boolean')cfg.autoEndRound=true;
 var gs={score:0,shots:0,hits:0,streak:0,top:0,bestStreak:0,tShots:0,tHits:0,sessions:[],rounds:[],bestRound:0,rd:null};
 try{var g0=JSON.parse(localStorage.getItem('drumGame'));if(g0)for(var gk in g0)gs[gk]=g0[gk];}catch(e){}
 if(!Array.isArray(gs.sessions))gs.sessions=[];if(!Array.isArray(gs.rounds))gs.rounds=[];
@@ -996,8 +997,7 @@ if(best>=0)toggle(best);snapNear();return;}
 var s=d.s,w=0;
 if(s.length>1&&n-s[s.length-1].t<80){var dt=(s[s.length-1].t-s[0].t)/1000;if(dt>0.008)w=(s[s.length-1].th-s[0].th)/dt;}
 w=Math.max(-90,Math.min(90,w));
-/* strong short counter-clockwise flick → reshuffle drum (+ end round in game mode)
-   Cooldown + staggered animation so it doesn't fire 3–4 rounds in a row and looks smooth. */
+/* strong short counter-clockwise flick → reshuffle drum (+ end round in game mode)   Cooldown + staggered animation so it doesn't fire 3–4 rounds in a row and looks smooth. */
 var gestDur=n-d.t0;
 if(!netOn()&&w>20&&gestDur<480&&gestDur>40&&(n-(end._lastReshuffle||0)>1500)){
   end._lastReshuffle=n;
@@ -1191,7 +1191,23 @@ function eject(st){
 }
 function fire(netResult){
   /* A remote authoritative result must be replayed even if this client is mid-animation. */
-  if((tween||drag)&&!netResult)return;
+  if(drag&&!netResult)return;
+  /* Во время раскрутки — быстро остановить у ближайшей каморы, затем выстрел */
+  if(tween&&!netResult){
+    if(fire._stopping)return;
+    fire._stopping=true;
+    var target=Math.round(theta/STEP)*STEP;
+    var elapsed=(performance.now()-tween.t0)/1000;
+    var remaining=Math.max(0.14,Math.min(0.42,(1-elapsed/Math.max(0.01,tween.dur))*0.5));
+    snapTo(target,remaining,eMag);
+    setTimeout(function(){
+      fire._stopping=false;
+      if(tween){theta=tween.to;tween=null;}
+      fire();
+    },Math.round(remaining*1000)+40);
+    return;
+  }
+  fire._stopping=false;
   if(typeof netEnabled!=='undefined'&&netEnabled&&!netApplying){
     if(netRole==='guest'){if(netTurn===1)sendNet({type:'request',action:'fire'});return;}
     if(netRole==='host'&&netTurn!==0&&!netActingForPeer)return;
@@ -1255,6 +1271,7 @@ $('doomMus').checked=cfg.doomMusic!==false;$('doomMus').onchange=function(){cfg.
 $('bgMus').checked=cfg.bgMusic!==false;$('bgMus').onchange=function(){cfg.bgMusic=this.checked;saveCfg();};
 $('vib').checked=cfg.vib;$('vib').onchange=function(){cfg.vib=this.checked;saveCfg();applyVib();};
 if($('randBlue')){$('randBlue').checked=!!cfg.randBlue;$('randBlue').onchange=function(){cfg.randBlue=this.checked;saveCfg();};}
+if($('autoEndRound')){$('autoEndRound').checked=cfg.autoEndRound!==false;$('autoEndRound').onchange=function(){cfg.autoEndRound=this.checked;saveCfg();};}
 $('camReset').onclick=function(){resetCam();};
 seg('segCam',[
   ['default','Обычный'],
@@ -1268,10 +1285,16 @@ seg('segCam',[
   else if(v==='top'){camView.theta=0.5;camView.phi=0.35;camView.dist=1.15;}
   camPos();
 });
-var L=$('labs');L.innerHTML='';
-for(var i=0;i<N;i++)(function(i){var x=document.createElement('input');x.className='tx';x.maxLength=40;x.placeholder='Камора '+(i+1);x.value=cfg.labels[i]||'';x.setAttribute('aria-label','Смысл каморы '+(i+1));x.oninput=function(){cfg.labels[i]=x.value;saveCfg();refresh(true);};L.appendChild(x);})(i);}
-function setImmersive(on){document.body.classList.toggle('immersive',!!on);$('immersiveBtn').textContent=on?'Обычный вид':'Без UI';$('immersiveBtn').setAttribute('aria-pressed',on?'true':'false');if(on){closeSheets();document.body.classList.remove('menuOpen');}window.scrollTo(0,0);requestAnimationFrame(function(){resize();});[60,200,450].forEach(function(t){setTimeout(function(){window.scrollTo(0,0);resize();},t);});}
+}
+function setImmersive(on){
+  document.body.classList.toggle('immersive',!!on);
+  if($('immersiveBtn')){$('immersiveBtn').textContent=on?'Обычный вид':'Без UI';$('immersiveBtn').setAttribute('aria-pressed',on?'true':'false');$('immersiveBtn').classList.toggle('on',!!on);}
+  if($('hdrImmersiveBtn')){$('hdrImmersiveBtn').className='eyeBtn'+(on?' on':'');$('hdrImmersiveBtn').setAttribute('aria-pressed',on?'true':'false');}
+  if(on){closeSheets();document.body.classList.remove('menuOpen');}
+  window.scrollTo(0,0);requestAnimationFrame(function(){resize();});[60,200,450].forEach(function(t){setTimeout(function(){window.scrollTo(0,0);resize();},t);});
+}
 $('immersiveBtn').onclick=function(){setImmersive(!document.body.classList.contains('immersive'));};
+if($('hdrImmersiveBtn'))$('hdrImmersiveBtn').onclick=function(){setImmersive(!document.body.classList.contains('immersive'));};
 $('exitImmersive').onclick=function(){setImmersive(false);};
 $('camBtn').onclick=function(){setCamMode(!camMode);};
  $('onlineToggle').onclick=function(){
@@ -1973,8 +1996,7 @@ function settleBet(rdPts){
     return{ok:true,push:true,amt:bet,profit:0};
   }
   /* lose: bet already deducted */
-  return{ok:false,amt:bet,profit:-bet};
-}
+  return{ok:false,amt:bet,profit:-bet};}
 function floatPts(text,pos,small){
   var st=$('stage'),r=canvas.getBoundingClientRect(),c=cpx(r),el=document.createElement('div');
   el.className='fp '+(pos?'pos':'neg')+(small?' sm':'');el.textContent=text;
@@ -1989,8 +2011,8 @@ function floatPts(text,pos,small){
 function newRd(n){return{n:n,started:false,red:0,blue:0,tot:N,pts:0,shots:0,hits:0,bet:0};}
 function rdStart(){
   var r=gs.rd;if(r.started||netOn())return;
-  /* слепой режим: не начинаем раунд на пустом барабане — заряжаем сразу, до подсчёта красных/синих */
-  if(cfg.blind&&!loaded.some(Boolean))autoLoad();
+  /* Не заряжаем здесь: иначе выстрел после пустого барабана «подхватывает» свежий патрон.
+     Зарядка — жестом против часовой / «Случайно» / «Новый раунд». */
   resetGameKnowledge();
   r.started=true;r.red=loaded.filter(function(v){return v===1;}).length;r.blue=loaded.filter(function(v){return v===2;}).length;r.tot=N;
   saveGs();if(cfg.game)floatPts('Раунд '+r.n+(r.bet?' · ставка '+r.bet:''),true,true);
@@ -2027,10 +2049,11 @@ function autoLoad(){
 }
 function checkRoundEnd(){
   if(netOn()||!gs.rd.started||loaded.some(Boolean))return;
+  if(cfg.autoEndRound===false)return;
   var d=endRound();
   if(d)setTimeout(function(){showVer('Раунд '+d.n+' завершён: '+sgn(d.pts)+' за '+d.sh+' выстр.',d.pts>=0?0:1);floatPts('Раунд '+d.n+' завершён',d.pts>=0,true);refresh(true);},1100);
   else refresh(true);
-  if(cfg.blind)setTimeout(autoLoad,2600);
+  /* без авто-зарядки после опустошения — иначе следующий выстрел бьёт по свежему патрону */
 }
 function chargeCounts(){
   var rd=gs.rd;
@@ -2059,7 +2082,9 @@ function updGame(){
   $('gmBtn').className='sg gt'+(cfg.game?' on':'');$('blindBtn').className='eyeBtn'+(cfg.blind?' on':'');
   var rd=gs.rd,rb=$('roundBar'),l1='',l2='',c=chargeCounts();
   if(cfg.game)l1="<div class='rl'><span class='rt'>РАУНД "+rd.n+" · "+(rd.started?'ИДЁТ · '+rd.shots+' выстр. · '+sgn(rd.pts):'ПОДГОТОВКА')+(rd.bet?' · ставка '+rd.bet:'')+"</span><span>Очки <b>"+gs.score+"</b> ›</span></div>";
-  if(cfg.game||cfg.blind){
+  /* В blind: заряд только до первого хода раунда */
+  var showCharge=!cfg.blind||!rd.started;
+  if((cfg.game||cfg.blind)&&showCharge){
     l2="<div class='rc'>"+visualChargeDots(c)+"<span class='chlab'>"+chargeLabel(c)+"</span></div>";
   }
   if(cfg.game&&!rd.started&&!netOn()){
@@ -2096,7 +2121,7 @@ function updGame(){
     vis=document.createElement('div');vis.id='chargeVis';
     $('stage').appendChild(vis);
   }
-  if(cfg.game||cfg.blind){
+  if((cfg.game||cfg.blind)&&showCharge){
     vis.innerHTML=visualChargeDots(c);
     vis.style.display='flex';
   }else{vis.style.display='none';}
@@ -2167,7 +2192,7 @@ function askClearScore(){
 }
 $('gNew').onclick=function(){confirmBox('Новая игра?','Счёт будет обнулён. Текущая игра сохранится в таблице рекордов.','Начать',newGame);};
 $('gWipe').onclick=function(){confirmBox('Стереть все рекорды?','Таблица рекордов, лучшая серия и история раундов будут удалены без возможности восстановления.','Стереть',function(){gs={score:0,shots:0,hits:0,streak:0,top:0,bestStreak:0,tShots:0,tHits:0,sessions:[],rounds:[],bestRound:0,rd:newRd(1)};saveGs();renderRec();refresh(true);});};
-$('cfgQuick').onclick=function(){renderCfg();openSheet('shCfg');};
+/* cfgQuick убран — настройки через меню */
 $('bRec').onclick=function(){renderRec();openSheet('shRec');};
 
 
@@ -2449,7 +2474,7 @@ document.addEventListener('click',function(e){
   if(!el||el.disabled)return;
   if(el.id==='spin'||el.id==='fire'||el.id==='fireSelf'||el.id==='snd'||el.classList.contains('dot'))return;
   if(el.matches('.xc,#menuClose,#menuShade,#exitImmersive,#camReset'))return uiSnd('close');
-  if(el.matches('#menuBtn,#bHist,#bRec,#bCfg,#cfgQuick,#onlineToggle,#roundBar,summary'))return uiSnd('open');
+  if(el.matches('#menuBtn,#bHist,#bRec,#bCfg,#onlineToggle,#roundBar,summary'))return uiSnd('open');
   setTimeout(function(){uiSnd(el.classList.contains('on')||el.getAttribute('aria-pressed')==='true'?'on':'click');},0);
 },true);
 document.addEventListener('change',function(e){var t=e.target;if(t&&t.type==='checkbox')uiSnd(t.checked?'on':'off');},true);
